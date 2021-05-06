@@ -35,7 +35,13 @@ $link-color: #9382e7;
   width: 280px;
 }
 
-#appContent {
-  height: 95vh;
-  width: auto
+.password-change {
+  display: none;
+}
+
+span.character-counter {
+  float: right;
+  margin-top: 5px;
+  font-size: 75%;
+  color: #5c2751;
 }

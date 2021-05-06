@@ -17,13 +17,13 @@ require 'components/head.php';
         <div class="row my-1">
           <div class="col-12 col-lg-6 my-2">
             <div class="form-floating">
-              <input type="email" class="form-control" name="usrEmail" id="usrEmail" placeholder="name@example.com">
+              <input type="email" class="form-control" name="usrEmail" id="usrEmail">
               <label for="usrEmail">Email address</label>
             </div>
           </div>
           <div class="col-12 col-lg -6 my-2">
             <div class="form-floating">
-              <input type="password" class="form-control" name="usrPassword" id="usrPassword" placeholder="Password">
+              <input type="password" class="form-control" name="usrPassword" id="usrPassword">
               <label for="usrPassword">Password</label>
             </div>
           </div>

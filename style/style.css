@@ -10742,8 +10742,14 @@ fieldset:disabled .btn {
   width: 280px;
 }
 
-#appContent {
-  height: 95vh;
-  width: calc(100vw - 280px);
+.password-change {
+  display: none;
+}
+
+span.character-counter {
+  float: right;
+  margin-top: 5px;
+  font-size: 75%;
+  color: #5c2751;
 }
 /*# sourceMappingURL=style.css.map */
