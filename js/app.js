@@ -59,6 +59,7 @@ window.addEventListener("popstate", (e) => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+
     document.body.addEventListener("click", e => {
         if (e.target.matches("[data-link]")) {
             eventHandler(e);
@@ -66,15 +67,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     router();
+
+    var currPath = document.location.pathname.replace('/', '');
+    if(currPath) {
+        document.getElementById(currPath).classList.add('active');
+    } else {
+        document.getElementById('encryption').click();
+    }
 });
 
 const eventHandler = (e) => {
     e.preventDefault();
-    navigateTo(e.target.href);
+    if(e.target.href) {
+        navigateTo(e.target.href);
+    }
     $('.active').removeClass('active');
     if(e.target.classList) {
         e.target.classList.add('active');
     } else {
         document.getElementById(document.location.pathname.replace('/', '')).classList.add('active');
     }
+    router();
 }
