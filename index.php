@@ -15,22 +15,22 @@ require 'components/head.php';
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="encryption" class="nav-link active" data-link>
+        <a href="encryption" id="encryption" class="nav-link" data-link>
           Encryption
         </a>
       </li>
       <li>
-        <a href="decryption" class="nav-link" data-link>
+        <a href="decryption" id="decryption" class="nav-link" data-link>
           Decryption
         </a>
       </li>
       <li>
-        <a href="archive" class="nav-link" data-link>
+        <a href="archive" id="archive" class="nav-link" data-link>
           Archive
         </a>
       </li>
       <li>
-        <a href="my-account" class="nav-link" data-link>
+        <a href="my-account" id="my-account" class="nav-link" data-link>
           My Account
         </a>
       </li>

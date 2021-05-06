@@ -23,6 +23,7 @@ const navigateTo = url => {
 const router = async () => {
     //Define the routes the app can provide to URL and addresses them to the correct View
     const routes = [
+        { path: "/", view: Encryption },
         { path: "/archive", view: Archive },
         { path: "/archive/:id", view: ArchiveView },
         { path: "/decryption", view: Decryption },
@@ -43,7 +44,7 @@ const router = async () => {
     //Default route to Encryption
     if (!match) {
         match = {
-            route: routes[3],
+            route: routes[4],
             result: [location.pathname]
         };
     }
@@ -53,17 +54,27 @@ const router = async () => {
     document.querySelector("#appContent").innerHTML = await view.getHtml();
 };
 
-window.addEventListener("popstate", router);
+window.addEventListener("popstate", (e) => {
+    eventHandler(e);
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     document.body.addEventListener("click", e => {
         if (e.target.matches("[data-link]")) {
-            e.preventDefault();
-            navigateTo(e.target.href);
-            $('.active').removeClass('active');
-            e.target.classList.add('active');
+            eventHandler(e);
         }
     });
 
     router();
 });
+
+const eventHandler = (e) => {
+    e.preventDefault();
+    navigateTo(e.target.href);
+    $('.active').removeClass('active');
+    if(e.target.classList) {
+        e.target.classList.add('active');
+    } else {
+        document.getElementById(document.location.pathname.replace('/', '')).classList.add('active');
+    }
+}
