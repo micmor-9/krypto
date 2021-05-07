@@ -16,6 +16,7 @@ $form-check-input-checked-bg-color: #9382e7;
 $form-check-input-checked-border-color: #9382e7;
 
 $component-active-bg: #9382e7;
+$component-active-color: #ffffff;
 $link-color: #9382e7;
 
 @import "../lib/bootstrap/scss/bootstrap";
@@ -44,4 +45,8 @@ span.character-counter {
   margin-top: 5px;
   font-size: 75%;
   color: #5c2751;
+}
+
+.btn-check:checked + .btn-outline-primary, .btn-check:active + .btn-outline-primary, .btn-outline-primary:active, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show {
+  color: #fff;
 }
