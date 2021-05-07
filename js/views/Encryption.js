@@ -12,12 +12,24 @@ export default class Encryption extends AbstractView {
     this.setTitle("Encryption");
   }
 
+  #encryptionHandler() {
+    $("#encryptionForm").submit(function (event) {
+      event.preventDefault();
+      var values = {};
+      $.each($(this).serializeArray(), function (i, field) {
+        values[field.name] = field.value;
+      });
+
+      $('#encryptionMessage').val(CryptoJS.AES.encrypt(values['encryptionMessage'], values['encryptionKey']));
+    });
+  }
+
   async getHtml() {
     return (
       `<div class="container">
     <h1>Encryption</h1>
     <p class="lead">Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt facere dolorem quaerat vitae, iure eum voluptatum libero.</p>
-    <form name="encryptionForm" method="post" class="col-12 col-lg-8 col-xl-5 mr-auto my-3">
+    <form name="encryptionForm" id="encryptionForm" method="post" class="col-12 col-lg-8 col-xl-5 mr-auto my-3">
     <div class="row my-1">
       <div class="col my-2">
         <label for="encryptionMessage" class="form-label">Your message</label>
@@ -68,5 +80,7 @@ export default class Encryption extends AbstractView {
         $(this).val().length + "/" + maxMessageLength
       );
     });
+
+    this.#encryptionHandler();
   }
 }

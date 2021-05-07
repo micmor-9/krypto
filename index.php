@@ -43,6 +43,7 @@ require 'components/head.php';
   </div>
 
   <script type="module" src="/js/app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
   <?php require 'components/footer.php'; ?>
 </body>
 

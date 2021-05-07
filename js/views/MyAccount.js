@@ -13,7 +13,7 @@ export default class MyAccount extends AbstractView {
   async getHtml() {
     return `<div class="container">
     <h1>My Account</h1>
-    <form name="myAccountForm" class="col-12 col-lg-8 col-xl-5 mr-auto my-3">
+    <form name="myAccountForm" id="myAccountForm" class="col-12 col-lg-8 col-xl-5 mr-auto my-3">
     <div class="row my-1">
       <div class="col my-2">
         <div class="form-floating">
@@ -84,4 +84,5 @@ export default class MyAccount extends AbstractView {
       }
     });
   }
+  
 }
