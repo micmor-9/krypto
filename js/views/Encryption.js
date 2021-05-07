@@ -59,7 +59,7 @@ export default class Encryption extends AbstractView {
       </div>
     </div>
     <div class="row my-1">
-      <label for="encryptionKey" class="col-sm-4 col-form-label">Your key</label>
+      <label for="encryptionKey" class="col-sm-4 col-form-label my-2">Your key</label>
       <div class="col my-2">
         <input type="text" class="form-control" id="encryptionKey" name="encryptionKey">
       </div>
