@@ -4,6 +4,8 @@
   
   <!-- Custom Bootstrap CSS by Michele Morgigno  -->
   <link rel="stylesheet" href="../style/style.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
   <title><?php echo $title; ?></title>
 </head>

@@ -5,7 +5,7 @@
 import AbstractView from "./AbstractView.js";
 
 const maxMessageLength = 200;
-const keyLengths = [128,192,256];
+const keyLengths = [128, 192, 256];
 
 export default class Encryption extends AbstractView {
   constructor(params) {
@@ -16,15 +16,39 @@ export default class Encryption extends AbstractView {
   #encryptionHandler() {
     $("#encryptionForm").submit(function (event) {
       //TODO form validation
-      
+
       event.preventDefault();
       var values = {};
       $.each($(this).serializeArray(), function (i, field) {
         values[field.name] = field.value;
       });
 
-      $('#encryptionMessage').val(CryptoJS.AES.encrypt(values['encryptionMessage'], values['encryptionKey']));
+      $("#encryptionMessage").val(
+        CryptoJS.AES.encrypt(
+          values["encryptionMessage"],
+          values["encryptionKey"]
+        )
+      );
     });
+  }
+
+  generateKey() {
+    let keyLength = ($("input[name='encryptionKeyLength']:checked").val());
+    var salt = CryptoJS.lib.WordArray.random(128 / 8);
+    var passphrase = CryptoJS.lib.WordArray.random(16 / 8);
+    var generatedKey = CryptoJS.PBKDF2(passphrase, salt, {
+      keySize: keyLength / 64,
+    });
+
+    $("#encryptionKey").val(generatedKey);
+    this.charCounterUpdate();
+  }
+
+  charCounterUpdate() {
+    let keyLength = $("input[name='encryptionKeyLength']:checked").val();
+    $("#keyCharacterCounter").html(
+      $("#encryptionKey").val().length + "/" + keyLength / 8
+    );
   }
 
   async getHtml() {
@@ -79,10 +103,15 @@ export default class Encryption extends AbstractView {
       </div>
     </div>
     <div class="row my-1">
-      <label for="encryptionKey" class="col-sm-4 col-form-label">Your key</label>
+      <label for="encryptionKey" class="col-sm-4 col-form-label my-2">Your key</label>
       <div class="col my-2">
-        <input type="text" class="form-control" id="encryptionKey" name="encryptionKey">
-        <span class="character-counter" id="keyCharacterCounter">0/` + keyLengths[0]/8 + `</span>
+        <div class="input-group">
+          <input type="text" class="form-control" id="encryptionKey" name="encryptionKey">
+          <button class="btn btn-outline-primary" type="button" id="generateKey" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate a key"><i class="bi bi-key-fill"></i></button>
+        </div>
+        <span class="character-counter" id="keyCharacterCounter">0/` +
+      keyLengths[0] / 8 +
+      `</span>
       </div>
     </div>
     <div class="row my-1">
@@ -102,36 +131,35 @@ export default class Encryption extends AbstractView {
       );
     });
 
-    $("input[name='encryptionKeyLength']").on("change", function () {
-      let keyLength = $(this).val();
-      $('#keyCharacterCounter').html(
-        $("#encryptionKey").val().length + "/" + keyLength/8
-      );
+    $("input[name='encryptionKeyLength']").on("change", () => {
+      this.charCounterUpdate();
     });
 
-    $("#encryptionKey").on("input", function () {
-      let keyLength = $("input[name='encryptionKeyLength']").val();
-      $('#keyCharacterCounter').html(
-        $(this).val().length + "/" + keyLength/8
-      );
+    $("#encryptionKey").on("input", () => {
+      this.charCounterUpdate();
     });
 
     $("input[name='encryptionObjectType']").on("change", function () {
       let type = $(this).val();
       switch (type) {
-        case 'msg': 
-          $('.encryption-file').fadeOut();
-          $('.encryption-message').fadeIn();
+        case "msg":
+          $(".encryption-file").fadeOut();
+          $(".encryption-message").fadeIn();
           break;
 
-        case 'file':
-          $('.encryption-message').fadeOut();
-          $('.encryption-file').fadeIn();
+        case "file":
+          $(".encryption-message").fadeOut();
+          $(".encryption-file").fadeIn();
           break;
-
       }
     });
 
+    var tooltipBtn = document.getElementById("generateKey");
+    var tooltip = new bootstrap.Tooltip(tooltipBtn);
+
+    $(tooltipBtn).on("click", (e) => {
+      this.generateKey();
+    });
     this.#encryptionHandler();
   }
 }
