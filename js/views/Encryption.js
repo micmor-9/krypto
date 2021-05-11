@@ -52,6 +52,8 @@ export default class Encryption extends AbstractView {
   }
 
   async getHtml() {
+    var date = new Date();
+    var stringDate = date.getFullYear() + '-' + ('0' + (date.getMonth()+1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
     return (
       `<div class="container">
     <h1>Encryption</h1>
@@ -99,7 +101,7 @@ export default class Encryption extends AbstractView {
     <div class="row my-1">
       <label for="encryptionTimeout" class="col-sm-4 col-form-label my-2">Timeout</label>
       <div class="col my-2">
-        <input type="date" class="form-control" id="encryptionTimeout" name="encryptionTimeout">
+        <input type="date" class="form-control" id="encryptionTimeout" name="encryptionTimeout" value="` + stringDate +`">
       </div>
     </div>
     <div class="row my-1">
