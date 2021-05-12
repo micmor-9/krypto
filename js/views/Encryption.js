@@ -15,28 +15,37 @@ export default class Encryption extends AbstractView {
 
   #encryptionHandler() {
     $("#encryptionForm").submit(function (event) {
-      //TODO form validation
-      var form = document.getElementById('encryptionForm');
-      
-      if (!form.checkValidity()) {
+      var form = document.getElementById("encryptionForm");
+      var result = form.checkValidity();
+      if (!result) {
         event.preventDefault();
         event.stopPropagation();
       }
 
       form.classList.add("was-validated");
 
-      /* event.preventDefault();
       var values = {};
       $.each($(this).serializeArray(), function (i, field) {
         values[field.name] = field.value;
       });
 
-      $("#encryptionMessage").val(
+      //Validations
+      success = true;
+      if(values[encryptionObjectType] == 'msg') {
+        if(values[encryptionMessage].length > maxMessageLength) {
+          success = false;
+        } 
+      } else {
+        //check if file has been uploaded successfully
+      }
+      
+
+      /* $("#encryptionMessage").val(
         CryptoJS.AES.encrypt(
           values["encryptionMessage"],
           values["encryptionKey"]
         )
-      ); */
+      ); */ 
     });
   }
 
@@ -125,9 +134,11 @@ export default class Encryption extends AbstractView {
       <label for="encryptionKey" class="col-sm-4 col-form-label my-2">Your key</label>
       <div class="col my-2">
         <div class="input-group">
-          <input type="text" class="form-control" id="encryptionKey" name="encryptionKey" maxlength="` + keyLengths[0]/8 + `" required>
+          <input type="text" class="form-control" id="encryptionKey" name="encryptionKey" maxlength="` +
+      keyLengths[0] / 8 +
+      `" pattern=".{` + keyLengths[0] / 8 + `}" required>
           <button class="btn btn-outline-primary" type="button" id="generateKey" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate a key"><i class="bi bi-key-fill"></i></button>
-          <div class="invalid-feedback">The key field cannot be empty.</div>
+          <div class="invalid-feedback">The key field must have the correct length.</div>
           </div>
         <span class="character-counter" id="keyCharacterCounter">0/` +
       keyLengths[0] / 8 +
@@ -153,7 +164,15 @@ export default class Encryption extends AbstractView {
     });
 
     $("input[name='encryptionKeyLength']").on("change", () => {
-      $('#encryptionKey').attr('maxlength', $("input[name='encryptionKeyLength']:checked").val()/8);
+      let length = $("input[name='encryptionKeyLength']:checked").val() / 8;
+      $("#encryptionKey").attr(
+        "maxlength",
+        length
+      );
+      $("#encryptionKey").attr(
+        "pattern",
+        '.{' + length + '}'
+      );
       this.charCounterUpdate();
     });
 
@@ -166,18 +185,18 @@ export default class Encryption extends AbstractView {
       switch (type) {
         case "msg":
           $(".encryption-file").fadeOut();
-          $('#encryptionFile').attr('required', false);
+          $("#encryptionFile").attr("required", false);
 
           $(".encryption-message").fadeIn();
-          $('#encryptionMessage').attr('required', true);
+          $("#encryptionMessage").attr("required", true);
           break;
 
         case "file":
           $(".encryption-message").fadeOut();
-          $('#encryptionMessage').attr('required', false);
+          $("#encryptionMessage").attr("required", false);
 
           $(".encryption-file").fadeIn();
-          $('#encryptionFile').attr('required', true);
+          $("#encryptionFile").attr("required", true);
           break;
       }
     });
