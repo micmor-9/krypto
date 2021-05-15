@@ -13,11 +13,11 @@ export default class Encryption extends AbstractView {
     this.setTitle("Encryption");
   }
 
-  #encryptionHandler() {
-    $("#encryptionForm").submit(function (event) {
+  encryptionHandler() {
+    $("#encryptionForm").submit((event) => {
       var form = document.getElementById("encryptionForm");
-      var result = form.checkValidity();
-      if (!result) {
+      var success = form.checkValidity();
+      if (!success) {
         event.preventDefault();
         event.stopPropagation();
       }
@@ -25,28 +25,69 @@ export default class Encryption extends AbstractView {
       form.classList.add("was-validated");
 
       var values = {};
-      $.each($(this).serializeArray(), function (i, field) {
+      $.each($(form).serializeArray(), function (i, field) {
         values[field.name] = field.value;
       });
 
+      console.log(values);
+      event.preventDefault();
+
       //Validations
-      success = true;
-      if(values[encryptionObjectType] == 'msg') {
-        if(values[encryptionMessage].length > maxMessageLength) {
+      let today = new Date();
+      if (values["encryptionObjectType"] == "msg") {
+        if (values["encryptionMessage"].length > maxMessageLength) {
           success = false;
-        } 
+        }
       } else {
         //check if file has been uploaded successfully
       }
-      
+
+      if (success) {
+        this.encryptionResult(values);
+      }
 
       /* $("#encryptionMessage").val(
         CryptoJS.AES.encrypt(
           values["encryptionMessage"],
           values["encryptionKey"]
         )
-      ); */ 
+      ); */
     });
+  }
+
+  encryptionResult(values) {
+    $('.app-content').fadeTo( "slow", 0.4 );
+    if (values["encryptionObjectType"] == "msg") {
+      var encryptedMessage = CryptoJS.AES.encrypt(values["encryptionMessage"],values["encryptionKey"]).toString();
+
+      console.log(encryptedMessage);
+
+      //ajax call to insert the encrypted message in DB and returns hashed identifier for retrieving items
+      
+      var qrImage = '<img src="https://api.qrserver.com/v1/create-qr-code/?data=' + values['encryptedMessage'] + '&size=100x100" alt="" title="" />';
+      
+      var newContent = `<a class="btn btn-link" role="button">&larr; back</a>
+      <form name="encryptionForm" id="encryptionForm" method="post" class="col-12 col-lg-8 col-xl-5 mr-auto my-3 needs-validation" novalidate>
+      <div class="row my-1 encryption-message">
+        <div class="col my-2">
+          <label for="encryptionMessage" class="form-label">Your encrypted message</label>
+          <textarea class="form-control" id="encryptionMessage" name="encryptionMessage" rows="10" disabled>` + encryptedMessage +`</textarea>
+        </div>
+      </div>
+      <div class="row my-1">
+        <label for="encryptionKey" class="col-sm-4 col-form-label my-2">Your key</label>
+        <div class="col my-2">
+          <div class="input-group">
+            <input type="text" class="form-control" id="encryptionKey" name="encryptionKey" value="` + values["encryptionKey"] + `" disabled>            
+          </div>
+        </div>
+      </div>
+      </form>
+      </div>`;
+
+      $('.app-content').html(newContent);
+      $('.app-content').fadeTo( "slow", 1 );
+    }
   }
 
   generateKey() {
@@ -57,8 +98,7 @@ export default class Encryption extends AbstractView {
       keySize: keyLength / 64,
     });
 
-    $("#encryptionKey").val(generatedKey);
-    this.charCounterUpdate();
+    return generatedKey;
   }
 
   charCounterUpdate() {
@@ -70,6 +110,12 @@ export default class Encryption extends AbstractView {
 
   async getHtml() {
     var date = new Date();
+    var todayDate =
+      date.getFullYear() +
+      "-" +
+      ("0" + (date.getMonth() + 1)).slice(-2) +
+      "-" +
+      ("0" + date.getDate()).slice(-2);
     date.setDate(date.getDate() + 30);
     var stringDate =
       date.getFullYear() +
@@ -81,6 +127,8 @@ export default class Encryption extends AbstractView {
       `<div class="container">
     <h1>Encryption</h1>
     <p class="lead">Advanced Encryption Standard(AES) is a symmetric encryption algorithm. AES is the industry standard as of now as it allows 128 bit, 192 bit and 256 bit encryption. Symmetric encryption is very fast as compared to asymmetric encryption and are used in systems such as database system.</p>
+    <div class="app-content">
+    <div class="app-content-overlay">
     <form name="encryptionForm" id="encryptionForm" method="post" class="col-12 col-lg-8 col-xl-5 mr-auto my-3 needs-validation" novalidate>
     <div class="row my-1">
       <label for="encryptionObjectType" class="col-sm-4 col-form-label my-2">Choose </label>
@@ -127,6 +175,8 @@ export default class Encryption extends AbstractView {
       <div class="col my-2">
         <input type="date" class="form-control" id="encryptionTimeout" name="encryptionTimeout" value="` +
       stringDate +
+      `" min="` +
+      todayDate +
       `">
       </div>
     </div>
@@ -136,7 +186,9 @@ export default class Encryption extends AbstractView {
         <div class="input-group">
           <input type="text" class="form-control" id="encryptionKey" name="encryptionKey" maxlength="` +
       keyLengths[0] / 8 +
-      `" pattern=".{` + keyLengths[0] / 8 + `}" required>
+      `" pattern=".{` +
+      keyLengths[0] / 8 +
+      `}" required>
           <button class="btn btn-outline-primary" type="button" id="generateKey" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate a key"><i class="bi bi-key-fill"></i></button>
           <div class="invalid-feedback">The key field must have the correct length.</div>
           </div>
@@ -152,6 +204,8 @@ export default class Encryption extends AbstractView {
       </div>
     </div>
   </form>
+  </div>
+  </div>
   </div>`
     );
   }
@@ -165,14 +219,8 @@ export default class Encryption extends AbstractView {
 
     $("input[name='encryptionKeyLength']").on("change", () => {
       let length = $("input[name='encryptionKeyLength']:checked").val() / 8;
-      $("#encryptionKey").attr(
-        "maxlength",
-        length
-      );
-      $("#encryptionKey").attr(
-        "pattern",
-        '.{' + length + '}'
-      );
+      $("#encryptionKey").attr("maxlength", length);
+      $("#encryptionKey").attr("pattern", ".{" + length + "}");
       this.charCounterUpdate();
     });
 
@@ -205,8 +253,10 @@ export default class Encryption extends AbstractView {
     var tooltip = new bootstrap.Tooltip(tooltipBtn);
 
     $(tooltipBtn).on("click", (e) => {
-      this.generateKey();
+      var key = this.generateKey();
+      $("#encryptionKey").val(key);
+      this.charCounterUpdate();
     });
-    this.#encryptionHandler();
+    this.encryptionHandler();
   }
 }

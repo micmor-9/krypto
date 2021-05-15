@@ -10757,4 +10757,8 @@ span.character-counter {
 .btn-check:active + .btn-outline-primary, .btn-outline-primary:active, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show {
   color: #fff;
 }
+
+.app-content {
+  background-color: #FFF;
+}
 /*# sourceMappingURL=style.css.map */
