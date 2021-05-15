@@ -56,37 +56,50 @@ export default class Encryption extends AbstractView {
   }
 
   encryptionResult(values) {
-    $('.app-content').fadeTo( "slow", 0.4 );
+    $(".app-content").fadeTo("slow", 0.4);
     if (values["encryptionObjectType"] == "msg") {
-      var encryptedMessage = CryptoJS.AES.encrypt(values["encryptionMessage"],values["encryptionKey"]).toString();
+      var encryptedMessage = CryptoJS.AES.encrypt(
+        values["encryptionMessage"],
+        values["encryptionKey"]
+      ).toString();
 
       console.log(encryptedMessage);
 
       //ajax call to insert the encrypted message in DB and returns hashed identifier for retrieving items
-      
-      var qrImage = '<img src="https://api.qrserver.com/v1/create-qr-code/?data=' + values['encryptedMessage'] + '&size=100x100" alt="" title="" />';
-      
-      var newContent = `<a class="btn btn-link" role="button">&larr; back</a>
-      <form name="encryptionForm" id="encryptionForm" method="post" class="col-12 col-lg-8 col-xl-5 mr-auto my-3 needs-validation" novalidate>
+
+      var qrImage =
+        '<img src="https://api.qrserver.com/v1/create-qr-code/?data=' +
+        values["encryptedMessage"] +
+        '&size=100x100" alt="" title="" />';
+
+      var newContent =
+        `<a href="encryption" class="btn btn-link px-0" role="button" data-link>&larr; back</a>
+      <h3>Result</h3>
+      <form name="encryptionForm" id="encryptionForm" method="post" class="col-12 col-lg-8 col-xl-5 mr-auto mb-3 needs-validation" novalidate>
       <div class="row my-1 encryption-message">
         <div class="col my-2">
           <label for="encryptionMessage" class="form-label">Your encrypted message</label>
-          <textarea class="form-control" id="encryptionMessage" name="encryptionMessage" rows="10" disabled>` + encryptedMessage +`</textarea>
+          <textarea class="form-control" id="encryptionMessage" name="encryptionMessage" rows="10" disabled>` +
+        encryptedMessage +
+        `</textarea>
         </div>
       </div>
       <div class="row my-1">
         <label for="encryptionKey" class="col-sm-4 col-form-label my-2">Your key</label>
         <div class="col my-2">
           <div class="input-group">
-            <input type="text" class="form-control" id="encryptionKey" name="encryptionKey" value="` + values["encryptionKey"] + `" disabled>            
+            <input type="text" class="form-control" id="encryptionKey" name="encryptionKey" value="` +
+        values["encryptionKey"] +
+        `" disabled>            
           </div>
         </div>
       </div>
       </form>
       </div>`;
 
-      $('.app-content').html(newContent);
-      $('.app-content').fadeTo( "slow", 1 );
+      $(".app-content").html(newContent);
+      $(".app-content").fadeTo("slow", 1);
+
     }
   }
 
@@ -257,6 +270,7 @@ export default class Encryption extends AbstractView {
       $("#encryptionKey").val(key);
       this.charCounterUpdate();
     });
+
     this.encryptionHandler();
   }
 }
