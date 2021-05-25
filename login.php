@@ -13,11 +13,11 @@ require 'components/head.php';
       <div><a href="/" class="d-inline-block"><img class="d-block mx-auto" src="../assets/logo-light.jpeg" alt="" width="120" height="120" /></a></div>
       <a class="btn btn-link" href="<?php echo $_SERVER['HTTP_REFERER']; ?>" role="button">&larr; back</a>
       <h1 class="display-6">Login</h1>
-      <form name="usrLoginForm" class="col-lg-5 mx-auto my-3">
+      <form name="usrLoginForm" id="usrLoginForm"" class="col-lg-5 mx-auto my-3 needs-validation" novalidate> 
         <div class="row my-1">
           <div class="col my-2">
             <div class="form-floating">
-              <input type="email" class="form-control" name="usrEmail" id="usrEmail">
+              <input type="email" class="form-control" name="usrEmail" id="usrEmail" required>
               <label for="usrEmail">Email address</label>
             </div>
           </div>
@@ -25,7 +25,7 @@ require 'components/head.php';
         <div class="row my-1">
           <div class="col my-2">
             <div class="form-floating">
-              <input type="password" class="form-control" name="usrPassword" id="usrPassword">
+              <input type="password" class="form-control" name="usrPassword" id="usrPassword" required>
               <label for="usrPassword">Password</label>
             </div>
           </div>

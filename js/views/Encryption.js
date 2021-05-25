@@ -29,7 +29,7 @@ export default class Encryption extends AbstractView {
         values[field.name] = field.value;
       });
 
-      console.log(values);
+      //console.log(values);
       event.preventDefault();
 
       //Validations
@@ -161,7 +161,7 @@ export default class Encryption extends AbstractView {
         <span class="character-counter" id="messageCharacterCounter">0/` +
       maxMessageLength +
       `</span>
-      <div class="invalid-feedback">The message field cannot be empty.</div>
+      <div class="invalid-feedback">The message field can't be empty.</div>
       </div>
     </div>
     <div class="row my-1">
