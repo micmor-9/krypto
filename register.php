@@ -1,8 +1,15 @@
 <?php
+  global $title;
+  $title = 'Register | Krypto';
+  require_once 'components/head.php';
+
   if(isset($_GET['action'])){
+    require_once 'components/classes/database.php';
+
     if($_GET['action'] == 'register') {
-      echo "Register Action \n";
-      var_dump($_POST);
+      echo "Register Action";
+      //var_dump($_POST);
+      $db = new Database();
       die();
     }
   }
