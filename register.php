@@ -5,17 +5,18 @@
 
   if(isset($_GET['action'])){
     require_once 'components/classes/database.php';
+    require_once 'components/classes/user.php';
 
     if($_GET['action'] == 'register') {
-      echo "Register Action";
-      //var_dump($_POST);
-      $db = new Database();
-      die();
-    }
-  }
-  
-?>
-
+      $user = new User($_POST['usrFirstName'], $_POST['usrLastName'], $_POST['usrEmail'], $_POST['usrPassword'], $_POST['usrBirthdate']);
+      if($user->registerUser()){
+        header('location: login?action=success');
+      } else {
+        header('location: register?action=register-error');
+      }
+    } else {
+      ?>
+      
 <!doctype html>
 <html lang="en">
 
@@ -99,3 +100,9 @@ require 'components/head.php';
 </body>
 
 </html>
+
+<?php
+    }
+  }
+  
+?>

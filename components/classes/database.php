@@ -11,8 +11,6 @@
     private $connection;
     /* --------------------- */
 
-
-
     function __construct() {
       /* Get settings from ini file */
       $path = $_SERVER['DOCUMENT_ROOT'];
@@ -23,17 +21,20 @@
       $this->DB_PASSWORD = $ini_data['DB_PASSWORD'];
       $this->DB_NAME = $ini_data['DB_NAME'];
 
+      /* Try connection to the database */
       $this->connection = $this->connect();
+
+      if(!$this->connection) {
+        return false;
+      }
+      
       $sql = 'SHOW TABLES FROM '.$this->DB_NAME;
       $result = $this->connection->query($sql);
 
+      /* If empty, run the setup of the database. */
       if($result->num_rows == 0) {
-        if($this->setup()){
-
-        }
-      } else {
-        while ($row = mysqli_fetch_row($result)) {
-          echo "Table: {$row[0]}\n";
+        if(!($this->setup())){
+          echo 'There has been an error in the setup of database.';
         }
       }
     }
@@ -41,7 +42,7 @@
     function setup() {
       //DB Tables inizialization
       //Table: user
-      $sql = "CREATE TABLE user ( user_id INT NOT NULL AUTO_INCREMENT , email VARCHAR(30) NOT NULL , first_name VARCHAR(30) NOT NULL , last_name INT(30) NOT NULL , password INT(50) NOT NULL , birthdate DATE NOT NULL , PRIMARY KEY (user_id));";
+      $sql = "CREATE TABLE user ( user_id INT NOT NULL AUTO_INCREMENT , email VARCHAR(30) NOT NULL UNIQUE , first_name VARCHAR(30) NOT NULL , last_name VARCHAR(30) NOT NULL , password VARCHAR(100) NOT NULL , birthdate DATE NOT NULL , PRIMARY KEY (user_id));";
       $result = $this->connection->query($sql);
       
       if(!$result) {
@@ -83,9 +84,17 @@
       if(!isset($this->DB_HOST) || !isset($this->DB_USER) || !isset($this->DB_PASSWORD) || !isset($this->DB_NAME)) {
         return false;
       } else {
-        $mysqli = new mysqli($this->DB_HOST, $this->DB_USER, $this->DB_PASSWORD, $this->DB_NAME);
+        $mysqli = new mysqli($this->DB_HOST, $this->DB_USER, $this->DB_PASSWORD, $this->DB_NAME);      
         return $mysqli;
       }
+    }
+
+    function getConnection() {
+      return $this->connection;
+    }
+
+    function closeConnection() {
+      $this->connection->close();
     }
 
   }
