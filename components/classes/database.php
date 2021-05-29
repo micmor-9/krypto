@@ -42,7 +42,7 @@
     function setup() {
       //DB Tables inizialization
       //Table: user
-      $sql = "CREATE TABLE user ( user_id INT NOT NULL AUTO_INCREMENT , email VARCHAR(30) NOT NULL UNIQUE , first_name VARCHAR(30) NOT NULL , last_name VARCHAR(30) NOT NULL , password VARCHAR(100) NOT NULL , birthdate DATE NOT NULL , PRIMARY KEY (user_id));";
+      $sql = "CREATE TABLE user ( user_id INT NOT NULL AUTO_INCREMENT , email VARCHAR(30) NOT NULL UNIQUE , first_name VARCHAR(30) NOT NULL , last_name VARCHAR(30) NOT NULL , password VARCHAR(200) NOT NULL , birthdate DATE NOT NULL , PRIMARY KEY (user_id));";
       $result = $this->connection->query($sql);
       
       if(!$result) {

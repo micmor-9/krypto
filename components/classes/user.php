@@ -9,12 +9,13 @@
     private $password;
     private $birthdate;
 
-    function __construct($f_name, $l_name, $e_mail, $psw, $bd) {
+    function __construct($f_name, $l_name, $e_mail, $psw, $bd, $id = null) {
       $this->first_name = $f_name;
       $this->last_name = $l_name;
       $this->email = $e_mail;
       $this->password = $psw;
       $this->birthdate = $bd;
+      $this->user_id = $id;
     }
 
     function getUserId() {
@@ -76,6 +77,45 @@
         $db->closeConnection();
         return false;
       }
+    }
+
+    static function findUserByEmail($email) {
+      $db = new Database();
+      $conn = $db->getConnection();
+
+      $stmt = $conn->prepare("SELECT * FROM user WHERE email = (?)");
+      if($stmt == FALSE) {
+        die('prepare() failed: ' . htmlspecialchars($conn->error));
+      }
+
+      $stmt->bind_param("s", $email);
+      if ( false == $stmt ) {
+        die('bind_param() failed: ' . htmlspecialchars($stmt->error));
+      }
+
+      $stmt->execute();
+      if($stmt->errno == 0) {
+        $res = $stmt->get_result();
+        $user = $res->fetch_assoc();
+
+        if($user['user_id'] != 0) {
+          $_user = new User($user['first_name'], $user['last_name'], $user['email'], $user['password'], $user['birthdate'], $user['user_id']);
+          return $_user;
+        } else {
+          return false;
+        }
+        $stmt->close();
+        $db->closeConnection();
+        return true;
+      } else {
+        $stmt->close();
+        $db->closeConnection();
+        return false;
+      }
+    }
+
+    function checkPassword( $psw ) {
+      return password_verify($psw, $this->password);
     }
 
   }

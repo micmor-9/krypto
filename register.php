@@ -1,38 +1,26 @@
 <?php
-  global $title;
-  $title = 'Register | Krypto';
-  require_once 'components/head.php';
-
-  if(isset($_GET['action'])){
-    require_once 'components/classes/database.php';
-    require_once 'components/classes/user.php';
-
-    if($_GET['action'] == 'register') {
-      $user = new User($_POST['usrFirstName'], $_POST['usrLastName'], $_POST['usrEmail'], $_POST['usrPassword'], $_POST['usrBirthdate']);
-      if($user->registerUser()){
-        header('location: login?action=success');
-      } else {
-        header('location: register?action=register-error');
-      }
-    } else {
-      ?>
-      
-<!doctype html>
-<html lang="en">
-
-<?php
 global $title;
 $title = 'Register | Krypto';
-require 'components/head.php';
+require_once 'components/head.php';
+
+if ($_GET['result'] == 'error') {
+  $alertMessage = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    There has been an error during registration. Retry!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>';
+}
 ?>
 
+<!doctype html>
+<html lang="en">
 <body>
   <div class="container">
     <div class="px-4 py-5 my-md-5 text-center">
       <div><a href="/" class="d-inline-block"><img class="d-block mx-auto" src="../assets/logo-light.jpeg" alt="" width="120" height="120" /></a></div>
       <a class="btn btn-link" href="<?php echo $_SERVER['HTTP_REFERER']; ?>" role="button">&larr; back</a>
       <h1 class="display-6">Register</h1>
-      <form action="register?action=register" name="usrRegisterForm" id="usrRegisterForm" class="col-8 mx-auto my-3 needs-validation" method="post" novalidate>
+      <form action="auth?action=register" name="usrRegisterForm" id="usrRegisterForm" class="col-8 mx-auto my-3 needs-validation" method="post" novalidate>
+      <?php echo (isset($alertMessage)) ? $alertMessage : ''; ?>
         <div class="row my-1">
           <div class="col-6 col-lg-4 my-2">
             <div class="form-floating">
@@ -100,9 +88,3 @@ require 'components/head.php';
 </body>
 
 </html>
-
-<?php
-    }
-  }
-  
-?>
