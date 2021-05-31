@@ -1,12 +1,3 @@
-<!doctype html>
-<html lang="en">
-
-<?php
-global $title;
-$title = 'Krypto, data hiding at its finest';
-require 'components/head.php';
-?>
-
 <body>
   <div class="container">
     <div class="px-4 py-5 my-md-5 text-center">

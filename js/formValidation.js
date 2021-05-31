@@ -25,7 +25,6 @@ if (registerForm) {
       values[field.name] = field.value;
     });
 
-    console.log(values);
     registerForm.classList.add("was-validated");
 
     if(!valid) {
@@ -35,7 +34,7 @@ if (registerForm) {
 }
 
 $("#usrPassword").change(function (event) {
-  console.log(passwordCheck());
+  passwordCheck();
 });
 
 $("#usrPasswordConfirm").change(function (event) {

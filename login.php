@@ -19,17 +19,22 @@ if (isset($_GET['result'])) {
       break;
 
     case 'user':
-      // TODO change user alert content
-      $alertMessage = '<div class="alert alert-success alert-dismissible fade show" role="alert">
-        Registration completed successfully!
+      $alertMessage = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+        No user found. Try with another email address.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>';
       break;
 
     case 'password':
-      // TODO change password alert content
-      $alertMessage = '<div class="alert alert-success alert-dismissible fade show" role="alert">
-        Registration completed successfully!
+      $alertMessage = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+        Wrong password. <a href="#" class="alert-link">Lost your password?</a>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>';
+      break;
+
+    case 'session':
+      $alertMessage = '<div class="alert alert-warning alert-dismissible fade show" role="alert">
+        Session expired, please login again.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>';
       break;

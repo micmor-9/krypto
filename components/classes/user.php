@@ -114,6 +114,42 @@
       }
     }
 
+    static function getUserById($id) {
+      $db = new Database();
+      $conn = $db->getConnection();
+
+      $stmt = $conn->prepare("SELECT * FROM user WHERE user_id = (?)");
+      if($stmt == false) {
+        die('prepare() failed: ' . htmlspecialchars($conn->error));
+      }
+
+      $stmt->bind_param("i", $id);
+      if ( $stmt == false ) {
+        die('bind_param() failed: ' . htmlspecialchars($stmt->error));
+      }
+
+      $stmt->execute();
+      if($stmt->errno == 0) {
+        $res = $stmt->get_result();
+        $user = $res->fetch_assoc();
+
+        if($user['user_id'] != 0) {
+          $_user = new User($user['first_name'], $user['last_name'], $user['email'], $user['password'], $user['birthdate'], $user['user_id']);
+          $stmt->close();
+          $db->closeConnection();
+          return $_user;
+        } else {
+          $stmt->close();
+          $db->closeConnection();
+          return false;
+        }
+      } else {
+        $stmt->close();
+        $db->closeConnection();
+        return false;
+      }
+    }
+
     function checkPassword( $psw ) {
       return password_verify($psw, $this->password);
     }

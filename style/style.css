@@ -10768,9 +10768,19 @@ span.character-counter {
   border-color: #f5c2c7;
 }
 
+.alert-warning {
+  color: #664d03;
+  background-color: #fff3cd;
+  border-color: #ffecb5;
+}
+
 .alert-success {
   color: #0f5132;
   background-color: #d1e7dd;
   border-color: #badbcc;
+}
+
+.alert-danger a.alert-link {
+  color: #6a1a21;
 }
 /*# sourceMappingURL=style.css.map */
