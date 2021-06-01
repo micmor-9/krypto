@@ -64,8 +64,6 @@ if (isset($_GET['action'])) {
 function checkAuth($login = false) {
   //Check if a session has already been created.
   session_start();
-  var_dump($_SESSION);
-  var_dump($_COOKIE);
   if (isset($_SESSION['uid']) || isset($_SESSION['logged_in'])) {
     if ((time() - $_SESSION['logged_in']) <= 3600) {
       return User::getUserById($_SESSION['uid']);

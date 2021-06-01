@@ -45,14 +45,20 @@ export default class Encryption extends AbstractView {
       if (success) {
         this.encryptionResult(values);
       }
-
-      /* $("#encryptionMessage").val(
-        CryptoJS.AES.encrypt(
-          values["encryptionMessage"],
-          values["encryptionKey"]
-        )
-      ); */
     });
+  }
+
+  async downloadImage(imageSrc) {
+    const image = await fetch(imageSrc);
+    const imageBlog = await image.blob();
+    const imageURL = URL.createObjectURL(imageBlog);
+
+    const link = document.createElement('a');
+    link.href = imageURL;
+    link.download = 'krypto-001.jpg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   encryptionResult(values) {
@@ -63,22 +69,23 @@ export default class Encryption extends AbstractView {
         values["encryptionKey"]
       ).toString();
 
-      console.log(encryptedMessage);
+      //TODO ajax call to insert the encrypted message in DB and returns hashed identifier for retrieving items
 
-      //ajax call to insert the encrypted message in DB and returns hashed identifier for retrieving items
-
-      var qrImage =
-        '<img src="https://api.qrserver.com/v1/create-qr-code/?data=' +
-        values["encryptedMessage"] +
-        '&size=100x100" alt="" title="" />';
+      var imageSrc = "https://api.qrserver.com/v1/create-qr-code/?data=" + encryptedMessage + "&size=150x150";
+      var qrImage ='<img src="' + imageSrc + '" alt="" title="" style="width: 100%; max-width: 150px;" />';
 
       var newContent =
         `<a href="encryption" class="btn btn-link px-0" role="button" data-link>&larr; back</a>
       <h3>Result</h3>
-      <form name="encryptionForm" id="encryptionForm" method="post" class="col-12 col-lg-8 col-xl-5 mr-auto mb-3 needs-validation" novalidate>
+      <div class="row">
+      <form class="col-12 col-lg-7 col-xl-6 mr-auto mb-3">
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Message encrypted successfully and stored in database.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
       <div class="row my-1 encryption-message">
+        <label for="encryptionMessage" class="form-label">Your encrypted message</label>
         <div class="col my-2">
-          <label for="encryptionMessage" class="form-label">Your encrypted message</label>
           <textarea class="form-control" id="encryptionMessage" name="encryptionMessage" rows="10" disabled>` +
         encryptedMessage +
         `</textarea>
@@ -92,14 +99,48 @@ export default class Encryption extends AbstractView {
         values["encryptionKey"] +
         `" disabled>            
           </div>
-        </div>
+      </div>
       </div>
       </form>
+      <div class="col-12 col-lg-5 col-xl-5 mr-auto mb-3">
+        <div class="row qr-code-area">
+          <div>Your QR Code</div>
+          <div class="col-4 col-lg-6 col-xl-5 my-2">
+            <div style="text-align: center;">` + qrImage +`</div>
+          </div>
+          <div class="col-8 col-lg-6 col-xl-5 my-2 d-grid">
+            <div class="btn-group-vertical">
+              <button id="shareButton" class="btn btn-outline-primary" type="button"><i class="bi bi-share-fill"></i>Share</button>
+              <button id="downloadButton" class="btn btn-outline-primary" type="button"><i class="bi bi-download"></i>Download</button>
+              <button id="emailButton" class="btn btn-outline-primary" type="button"><i class="bi bi-envelope-fill"></i>E-Mail</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
       </div>`;
 
       $(".app-content").html(newContent);
+
+      $('#shareButton').on("click", (e) => {
+        console.log('share');
+        //TODO share api
+      });
+  
+      $('#downloadButton').on("click", (e) => {
+        console.log('download');
+        this.downloadImage(imageSrc);
+      });
+  
+      $('#emailButton').on("click", (e) => {
+        console.log('email');
+        //TODO send link via email
+      });
+
       $(".app-content").fadeTo("slow", 1);
 
+    } else {
+      //TODO enc object file
     }
   }
 
@@ -262,10 +303,10 @@ export default class Encryption extends AbstractView {
       }
     });
 
-    var tooltipBtn = document.getElementById("generateKey");
-    var tooltip = new bootstrap.Tooltip(tooltipBtn);
+    var generateKeyButton = document.getElementById("generateKey");
+    var tooltip = new bootstrap.Tooltip(generateKeyButton);
 
-    $(tooltipBtn).on("click", (e) => {
+    $(generateKeyButton).on("click", (e) => {
       var key = this.generateKey();
       $("#encryptionKey").val(key);
       this.charCounterUpdate();

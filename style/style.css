@@ -10783,4 +10783,13 @@ span.character-counter {
 .alert-danger a.alert-link {
   color: #6a1a21;
 }
+
+.qr-code-area .bi {
+  margin-right: 20px;
+  margin-left: 10px;
+}
+
+.qr-code-area .btn {
+  text-align: left;
+}
 /*# sourceMappingURL=style.css.map */
