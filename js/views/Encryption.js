@@ -105,8 +105,8 @@ export default class Encryption extends AbstractView {
       <div class="col-12 col-lg-5 col-xl-5 mr-auto mb-3">
         <div class="row qr-code-area">
           <div>Your QR Code</div>
-          <div class="col-4 col-lg-6 col-xl-5 my-2">
-            <div style="text-align: center;">` + qrImage +`</div>
+          <div class="col-4 col-lg-6 col-xl-4 my-2">
+            <div>` + qrImage +`</div>
           </div>
           <div class="col-8 col-lg-6 col-xl-5 my-2 d-grid">
             <div class="btn-group-vertical">

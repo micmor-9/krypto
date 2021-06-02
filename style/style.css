@@ -10742,7 +10742,7 @@ fieldset:disabled .btn {
   width: 280px;
 }
 
-.password-change, .encryption-file {
+.password-change, .encryption-file, .decryption-file {
   display: none;
 }
 

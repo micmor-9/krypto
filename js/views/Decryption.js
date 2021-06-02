@@ -15,7 +15,9 @@ export default class Decryption extends AbstractView {
 
   decryptionHandler() {
     $("#decryptionForm").submit((event) => {
-      var form = document.getElementById("decryptionForm");
+      //TODO decryptionHandler
+
+      /* var form = document.getElementById("decryptionForm");
       var success = form.checkValidity();
       if (!success) {
         event.preventDefault();
@@ -44,14 +46,7 @@ export default class Decryption extends AbstractView {
 
       if (success) {
         this.decryptionResult(values);
-      }
-
-      /* $("#decryptionMessage").val(
-        CryptoJS.AES.encrypt(
-          values["decryptionMessage"],
-          values["decryptionKey"]
-        )
-      ); */
+      } */
     });
   }
 
@@ -103,17 +98,6 @@ export default class Decryption extends AbstractView {
     }
   }
 
-  generateKey() {
-    let keyLength = $("input[name='decryptionKeyLength']:checked").val();
-    var salt = CryptoJS.lib.WordArray.random(128 / 8);
-    var passphrase = CryptoJS.lib.WordArray.random(16 / 8);
-    var generatedKey = CryptoJS.PBKDF2(passphrase, salt, {
-      keySize: keyLength / 64,
-    });
-
-    return generatedKey;
-  }
-
   charCounterUpdate() {
     let keyLength = $("input[name='decryptionKeyLength']:checked").val();
     $("#keyCharacterCounter").html(
@@ -122,24 +106,9 @@ export default class Decryption extends AbstractView {
   }
 
   async getHtml() {
-    var date = new Date();
-    var todayDate =
-      date.getFullYear() +
-      "-" +
-      ("0" + (date.getMonth() + 1)).slice(-2) +
-      "-" +
-      ("0" + date.getDate()).slice(-2);
-    date.setDate(date.getDate() + 30);
-    var stringDate =
-      date.getFullYear() +
-      "-" +
-      ("0" + (date.getMonth() + 1)).slice(-2) +
-      "-" +
-      ("0" + date.getDate()).slice(-2);
     return (
       `<div class="container">
     <h1>Decryption</h1>
-    <p class="lead">Advanced decryption Standard(AES) is a symmetric decryption algorithm. AES is the industry standard as of now as it allows 128 bit, 192 bit and 256 bit decryption. Symmetric decryption is very fast as compared to asymmetric decryption and are used in systems such as database system.</p>
     <div class="app-content">
     <div class="app-content-overlay">
     <form name="decryptionForm" id="decryptionForm" method="post" class="col-12 col-lg-8 col-xl-5 mr-auto my-3 needs-validation" novalidate>
@@ -171,29 +140,6 @@ export default class Decryption extends AbstractView {
       </div>
     </div>
     <div class="row my-1">
-      <label for="decryptionKeyLength" class="col-sm-4 col-form-label my-2">Key Length</label>
-      <div class="col my-2">
-        <div class="btn-group" role="group" aria-label="Key Length input group">
-          <input type="radio" class="btn-check" name="decryptionKeyLength" id="keyLength128" value="128" autocomplete="off" checked>
-          <label class="btn btn-outline-primary" for="keyLength128">128 bit</label>    
-          <input type="radio" class="btn-check" name="decryptionKeyLength" id="keyLength192" value="192" autocomplete="off">
-          <label class="btn btn-outline-primary" for="keyLength192">192 bit</label>    
-          <input type="radio" class="btn-check" name="decryptionKeyLength" id="keyLength256" value="256" autocomplete="off">
-          <label class="btn btn-outline-primary" for="keyLength256">256 bit</label>
-        </div>
-      </div>
-    </div>
-    <div class="row my-1">
-      <label for="decryptionTimeout" class="col-sm-4 col-form-label my-2">Timeout</label>
-      <div class="col my-2">
-        <input type="date" class="form-control" id="decryptionTimeout" name="decryptionTimeout" value="` +
-      stringDate +
-      `" min="` +
-      todayDate +
-      `">
-      </div>
-    </div>
-    <div class="row my-1">
       <label for="decryptionKey" class="col-sm-4 col-form-label my-2">Your key</label>
       <div class="col my-2">
         <div class="input-group">
@@ -213,7 +159,7 @@ export default class Decryption extends AbstractView {
     
     <div class="row my-1">
       <div class="col my-2">
-        <button class="btn btn-primary" type="submit">Encrypt</button>
+        <button class="btn btn-primary" type="submit">Decrypt</button>
       </div>
     </div>
   </form>
