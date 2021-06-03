@@ -72,7 +72,7 @@ export default class Encryption extends AbstractView {
       //TODO ajax call to insert the encrypted message in DB and returns hashed identifier for retrieving items
 
       var qrLink = 'https://' + document.location.hostname + '/decryption?obj=1234';
-      var imageSrc = "https://api.qrserver.com/v1/create-qr-code/?data=" + encryptedMessage + "&size=150x150";
+      var imageSrc = "https://api.qrserver.com/v1/create-qr-code/?data=" + qrLink + "&size=150x150";
       var qrImage ='<img src="' + imageSrc + '" alt="" title="" style="width: 100%; max-width: 150px;" />';
 
       var newContent =
