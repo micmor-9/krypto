@@ -11,6 +11,8 @@ export default class MyAccount extends AbstractView {
   }
 
   async getHtml() {
+    //TODO get user data from db
+
     return `<div class="container">
     <h1>My Account</h1>
     <form name="myAccountForm" id="myAccountForm" class="col-12 col-lg-8 col-xl-5 mr-auto my-3">

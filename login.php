@@ -46,7 +46,7 @@ if (isset($_GET['result'])) {
   <div class="container">
     <div class="px-4 py-5 my-md-5 text-center">
       <div><a href="/" class="d-inline-block"><img class="d-block mx-auto" src="../assets/logo-light.jpeg" alt="" width="120" height="120" /></a></div>
-      <a class="btn btn-link" href="<?php echo $_SERVER['HTTP_REFERER']; ?>" role="button">&larr; back</a>
+      <a class="btn btn-link" href="/" role="button">&larr; back</a>
       <h1 class="display-6">Login</h1>
       <form action="auth?action=login" method="post" name="usrLoginForm" id="usrLoginForm"" class="col-lg-5 mx-auto my-3 needs-validation" novalidate>
         <?php echo (isset($alertMessage)) ? $alertMessage : ''; ?> 

@@ -3,11 +3,13 @@ global $title;
 $title = 'Register | Krypto';
 require_once 'components/head.php';
 
-if ($_GET['result'] == 'error') {
-  $alertMessage = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    There has been an error during registration. Retry!
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>';
+if (isset($_GET['result'])) {
+  if($_GET['result'] == 'error') {
+    $alertMessage = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+      There has been an error during registration. Retry!
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>';
+  }
 }
 ?>
 

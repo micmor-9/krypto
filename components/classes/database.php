@@ -60,7 +60,7 @@
       }
 
       //Table: qr_code
-      $sql = "CREATE TABLE qr_code ( qr_id INT NOT NULL AUTO_INCREMENT , reference VARCHAR(100) NOT NULL , key_length INT NOT NULL , PRIMARY KEY (qr_id));";
+      $sql = "CREATE TABLE qr_code ( qr_id INT NOT NULL AUTO_INCREMENT , reference VARCHAR(100) NOT NULL , download_link VARCHAR(100) NOT NULL , PRIMARY KEY (qr_id));";
       $result = $this->connection->query($sql);
       
       if(!$result) {
@@ -69,7 +69,7 @@
       }
 
       //Table: ecnrypted_object
-      $sql = "CREATE TABLE encrypted_object ( obj_id INT NOT NULL AUTO_INCREMENT , timeout DATE NOT NULL , content VARCHAR(1000) NULL , download_link VARCHAR(50) NULL , user_id INT NOT NULL, key_id INT NOT NULL, qr_id INT NOT NULL, PRIMARY KEY (obj_id), FOREIGN KEY (user_id) REFERENCES user(user_id), FOREIGN KEY (key_id) REFERENCES pass_key(key_id), FOREIGN KEY (qr_id) REFERENCES qr_code(qr_id))";
+      $sql = "CREATE TABLE encrypted_object ( obj_id INT NOT NULL AUTO_INCREMENT , timeout DATE NOT NULL , content VARCHAR(1000) NULL , file_download_link VARCHAR(50) NULL , user_id INT NOT NULL, key_id INT NOT NULL, qr_id INT NOT NULL, PRIMARY KEY (obj_id), FOREIGN KEY (user_id) REFERENCES user(user_id), FOREIGN KEY (key_id) REFERENCES pass_key(key_id), FOREIGN KEY (qr_id) REFERENCES qr_code(qr_id))";
       $result = $this->connection->query($sql);
       
       if(!$result) {

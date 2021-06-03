@@ -1,5 +1,4 @@
 import Archive from './views/Archive.js';
-import ArchiveView from './views/ArchiveView.js';
 import Decryption from './views/Decryption.js';
 import Encryption from './views/Encryption.js';
 import MyAccount from './views/MyAccount.js';
@@ -25,7 +24,6 @@ const router = async () => {
     const routes = [
         { path: "/", view: Encryption },
         { path: "/archive", view: Archive },
-        { path: "/archive/:id", view: ArchiveView },
         { path: "/decryption", view: Decryption },
         { path: "/encryption", view: Encryption },
         { path: "/my-account", view: MyAccount }

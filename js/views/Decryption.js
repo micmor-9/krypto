@@ -101,7 +101,7 @@ export default class Decryption extends AbstractView {
   charCounterUpdate() {
     let keyLength = $("input[name='decryptionKeyLength']:checked").val();
     $("#keyCharacterCounter").html(
-      $("#decryptionKey").val().length + "/" + keyLength / 8
+      $("#decryptionKey").val().length
     );
   }
 
@@ -142,18 +142,13 @@ export default class Decryption extends AbstractView {
     <div class="row my-1">
       <label for="decryptionKey" class="col-sm-4 col-form-label my-2">Your key</label>
       <div class="col my-2">
-        <div class="input-group">
           <input type="text" class="form-control" id="decryptionKey" name="decryptionKey" maxlength="` +
-      keyLengths[0] / 8 +
+      keyLengths[2] / 8 +
       `" pattern=".{` +
-      keyLengths[0] / 8 +
-      `}" required>
-          <button class="btn btn-outline-primary" type="button" id="generateKey" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate a key"><i class="bi bi-key-fill"></i></button>
-          <div class="invalid-feedback">The key field must have the correct length.</div>
-          </div>
-        <span class="character-counter" id="keyCharacterCounter">0/` +
-      keyLengths[0] / 8 +
-      `</span>
+      keyLengths[2] / 8 +
+      `}" required>          
+        <div class="invalid-feedback">The key field must have the correct length.</div>
+        <span class="character-counter" id="keyCharacterCounter">0</span>
       </div>
     </div>
     
@@ -174,13 +169,6 @@ export default class Decryption extends AbstractView {
       $("#messageCharacterCounter").html(
         $(this).val().length + "/" + maxMessageLength
       );
-    });
-
-    $("input[name='decryptionKeyLength']").on("change", () => {
-      let length = $("input[name='decryptionKeyLength']:checked").val() / 8;
-      $("#decryptionKey").attr("maxlength", length);
-      $("#decryptionKey").attr("pattern", ".{" + length + "}");
-      this.charCounterUpdate();
     });
 
     $("#decryptionKey").on("input", () => {
@@ -206,15 +194,6 @@ export default class Decryption extends AbstractView {
           $("#decryptionFile").attr("required", true);
           break;
       }
-    });
-
-    var tooltipBtn = document.getElementById("generateKey");
-    var tooltip = new bootstrap.Tooltip(tooltipBtn);
-
-    $(tooltipBtn).on("click", (e) => {
-      var key = this.generateKey();
-      $("#decryptionKey").val(key);
-      this.charCounterUpdate();
     });
 
     this.decryptionHandler();

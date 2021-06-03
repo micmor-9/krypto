@@ -71,6 +71,7 @@ export default class Encryption extends AbstractView {
 
       //TODO ajax call to insert the encrypted message in DB and returns hashed identifier for retrieving items
 
+      var qrLink = 'https://' + document.location.hostname + '/decryption?obj=1234';
       var imageSrc = "https://api.qrserver.com/v1/create-qr-code/?data=" + encryptedMessage + "&size=150x150";
       var qrImage ='<img src="' + imageSrc + '" alt="" title="" style="width: 100%; max-width: 150px;" />';
 
@@ -111,6 +112,7 @@ export default class Encryption extends AbstractView {
           <div class="col-8 col-lg-6 col-xl-5 my-2 d-grid">
             <div class="btn-group-vertical">
               <button id="shareButton" class="btn btn-outline-primary" type="button"><i class="bi bi-share-fill"></i>Share</button>
+              <button id="copyButton" class="btn btn-outline-primary" type="button"><i class="bi bi-link-45deg"></i></i>Copy link</button>
               <button id="downloadButton" class="btn btn-outline-primary" type="button"><i class="bi bi-download"></i>Download</button>
               <button id="emailButton" class="btn btn-outline-primary" type="button"><i class="bi bi-envelope-fill"></i>E-Mail</button>
             </div>
@@ -122,23 +124,65 @@ export default class Encryption extends AbstractView {
 
       $(".app-content").html(newContent);
 
+      const animateText = (object, text) => {
+        function _animate(object, text) {
+          object.animate({opacity: 0},"slow");
+          object.queue(function() {
+            object.html(text);
+            object.dequeue(); 
+          });
+          object.animate({opacity:'1'},"slow");
+        }
+        
+        let content = object.html();
+        _animate(object, text);
+        setTimeout(() => {
+          _animate(object, content);
+        }, 2000);
+      }
+
       $('#shareButton').on("click", (e) => {
         console.log('share');
-        //TODO share api
+        if (navigator.share) {
+          navigator.share({
+            title: 'Krypto - Share encrypted message',
+            url: qrLink
+          }).then(() => { 
+            animateText($('#shareButton'), 'Shared successfully!');
+          })
+          .catch(console.error);
+        } else {
+          animateText($('#shareButton'), 'Browser not supported');
+        }
+      });
+
+      $('#copyButton').on("click", (e) => {
+        console.log('copia');
+        const elem = document.createElement('textarea');
+        elem.value = qrLink;
+        document.body.appendChild(elem);
+        elem.select();
+        document.execCommand('copy');
+        document.body.removeChild(elem);
+
+        var button = $('#copyButton');
+        animateText(button, 'Copied to clipboard!');
       });
   
       $('#downloadButton').on("click", (e) => {
         console.log('download');
         this.downloadImage(imageSrc);
+        animateText($('#downloadButton'), 'Image downloaded!');
       });
   
       $('#emailButton').on("click", (e) => {
         console.log('email');
-        //TODO send link via email
+        window.open('mailto:?subject=Krypto - Share encrypted message&body=' + qrLink);
+        animateText($('#emailButton'), 'Email sent!');
       });
 
       $(".app-content").fadeTo("slow", 1);
-
+      
     } else {
       //TODO enc object file
     }
