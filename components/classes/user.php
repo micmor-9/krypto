@@ -133,7 +133,7 @@
         $res = $stmt->get_result();
         $user = $res->fetch_assoc();
 
-        if($user['user_id'] != 0) {
+        if($user) {
           $_user = new User($user['first_name'], $user['last_name'], $user['email'], $user['password'], $user['birthdate'], $user['user_id']);
           $stmt->close();
           $db->closeConnection();

@@ -1,7 +1,7 @@
 <?php
 require_once 'components/classes/user.php';
 require_once 'components/classes/database.php';
-require_once 'components/classes/encObj.php';
+require_once 'components/classes/encrypted_object.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/auth.php'
 ?>
 

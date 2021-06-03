@@ -69,119 +69,135 @@ export default class Encryption extends AbstractView {
         values["encryptionKey"]
       ).toString();
 
+      var ajaxResult;
+      values["encryptionUserID"] = $('#loggedUserID').val();
+
       //TODO ajax call to insert the encrypted message in DB and returns hashed identifier for retrieving items
+      $.ajax({
+        url: '../../components/ajax/encryption.php',
+        type: 'POST',
+        data: {content: encryptedMessage, timeout: values["encryptionTimeout"], user_id: values["encryptionUserID"], key: values["encryptionKey"]},
+        success: function(result, xhr, status) {
+          console.log(result);
+          var qrLink = 'https://' + document.location.hostname + '/decryption?obj=1234';
+          var imageSrc = "https://api.qrserver.com/v1/create-qr-code/?data=" + qrLink + "&size=150x150";
+          var qrImage ='<img src="' + imageSrc + '" alt="" title="" style="width: 100%; max-width: 150px;" />';
 
-      var qrLink = 'https://' + document.location.hostname + '/decryption?obj=1234';
-      var imageSrc = "https://api.qrserver.com/v1/create-qr-code/?data=" + qrLink + "&size=150x150";
-      var qrImage ='<img src="' + imageSrc + '" alt="" title="" style="width: 100%; max-width: 150px;" />';
+          var resultAlert = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+          ` + result +`
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>`;
 
-      var newContent =
-        `<a href="encryption" class="btn btn-link px-0" role="button" data-link>&larr; back</a>
-      <h3>Result</h3>
-      <div class="row">
-      <form class="col-12 col-lg-7 col-xl-6 mr-auto mb-3">
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-        Message encrypted successfully and stored in database.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-      <div class="row my-1 encryption-message">
-        <label for="encryptionMessage" class="form-label">Your encrypted message</label>
-        <div class="col my-2">
-          <textarea class="form-control" id="encryptionMessage" name="encryptionMessage" rows="10" disabled>` +
-        encryptedMessage +
-        `</textarea>
-        </div>
-      </div>
-      <div class="row my-1">
-        <label for="encryptionKey" class="col-sm-4 col-form-label my-2">Your key</label>
-        <div class="col my-2">
-          <div class="input-group">
-            <input type="text" class="form-control" id="encryptionKey" name="encryptionKey" value="` +
-        values["encryptionKey"] +
-        `" disabled>            
-          </div>
-      </div>
-      </div>
-      </form>
-      <div class="col-12 col-lg-5 col-xl-5 mr-auto mb-3">
-        <div class="row qr-code-area">
-          <div>Your QR Code</div>
-          <div class="col-4 col-lg-6 col-xl-4 my-2">
-            <div>` + qrImage +`</div>
-          </div>
-          <div class="col-8 col-lg-6 col-xl-5 my-2 d-grid">
-            <div class="btn-group-vertical">
-              <button id="shareButton" class="btn btn-outline-primary" type="button"><i class="bi bi-share-fill"></i>Share</button>
-              <button id="copyButton" class="btn btn-outline-primary" type="button"><i class="bi bi-link-45deg"></i></i>Copy link</button>
-              <button id="downloadButton" class="btn btn-outline-primary" type="button"><i class="bi bi-download"></i>Download</button>
-              <button id="emailButton" class="btn btn-outline-primary" type="button"><i class="bi bi-envelope-fill"></i>E-Mail</button>
+          var newContent =
+            `<a href="encryption" class="btn btn-link px-0" role="button" data-link>&larr; back</a>
+          <h3>Result</h3>
+          <div class="row">
+          <form class="col-12 col-lg-7 col-xl-6 mr-auto mb-3">
+          ` + resultAlert +`
+          <div class="row my-1 encryption-message">
+            <label for="encryptionMessage" class="form-label">Your encrypted message</label>
+            <div class="col my-2">
+              <textarea class="form-control" id="encryptionMessage" name="encryptionMessage" rows="10" disabled>` +
+            encryptedMessage +
+            `</textarea>
             </div>
           </div>
-        </div>
-      </div>
-      </div>
-      </div>`;
+          <div class="row my-1">
+            <label for="encryptionKey" class="col-sm-4 col-form-label my-2">Your key</label>
+            <div class="col my-2">
+              <div class="input-group">
+                <input type="text" class="form-control" id="encryptionKey" name="encryptionKey" value="` +
+            values["encryptionKey"] +
+            `" disabled>            
+              </div>
+          </div>
+          </div>
+          </form>
+          <div class="col-12 col-lg-5 col-xl-5 mr-auto mb-3">
+            <div class="row qr-code-area">
+              <div>Your QR Code</div>
+              <div class="col-4 col-lg-6 col-xl-4 my-2">
+                <div>` + qrImage +`</div>
+              </div>
+              <div class="col-8 col-lg-6 col-xl-5 my-2 d-grid">
+                <div class="btn-group-vertical">
+                  <button id="shareButton" class="btn btn-outline-primary" type="button"><i class="bi bi-share-fill"></i>Share</button>
+                  <button id="copyButton" class="btn btn-outline-primary" type="button"><i class="bi bi-link-45deg"></i></i>Copy link</button>
+                  <button id="downloadButton" class="btn btn-outline-primary" type="button"><i class="bi bi-download"></i>Download</button>
+                  <button id="emailButton" class="btn btn-outline-primary" type="button"><i class="bi bi-envelope-fill"></i>E-Mail</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+          </div>`;
 
-      $(".app-content").html(newContent);
+          $(".app-content").html(newContent);
 
-      const animateText = (object, text) => {
-        function _animate(object, text) {
-          object.animate({opacity: 0},"slow");
-          object.queue(function() {
-            object.html(text);
-            object.dequeue(); 
+          const animateText = (object, text) => {
+            function _animate(object, text) {
+              object.animate({opacity: 0},"slow");
+              object.queue(function() {
+                object.html(text);
+                object.dequeue(); 
+              });
+              object.animate({opacity:'1'},"slow");
+            }
+            
+            let content = object.html();
+            _animate(object, text);
+            setTimeout(() => {
+              _animate(object, content);
+            }, 2000);
+          }
+
+          $('#shareButton').on("click", (e) => {
+            console.log('share');
+            if (navigator.share) {
+              navigator.share({
+                title: 'Krypto - Share encrypted message',
+                url: qrLink
+              }).then(() => { 
+                animateText($('#shareButton'), 'Shared successfully!');
+              })
+              .catch(console.error);
+            } else {
+              animateText($('#shareButton'), 'Browser not supported');
+            }
           });
-          object.animate({opacity:'1'},"slow");
+
+          $('#copyButton').on("click", (e) => {
+            console.log('copia');
+            const elem = document.createElement('textarea');
+            elem.value = qrLink;
+            document.body.appendChild(elem);
+            elem.select();
+            document.execCommand('copy');
+            document.body.removeChild(elem);
+
+            var button = $('#copyButton');
+            animateText(button, 'Copied to clipboard!');
+          });
+      
+          $('#downloadButton').on("click", (e) => {
+            console.log('download');
+            this.downloadImage(imageSrc);
+            animateText($('#downloadButton'), 'Image downloaded!');
+          });
+      
+          $('#emailButton').on("click", (e) => {
+            console.log('email');
+            window.open('mailto:?subject=Krypto - Share encrypted message&body=' + qrLink);
+            animateText($('#emailButton'), 'Email sent!');
+          });
+
+          $(".app-content").fadeTo("slow", 1);
+
+        },
+        error: function() {
+          console.log("Ajax Error");
         }
-        
-        let content = object.html();
-        _animate(object, text);
-        setTimeout(() => {
-          _animate(object, content);
-        }, 2000);
-      }
-
-      $('#shareButton').on("click", (e) => {
-        console.log('share');
-        if (navigator.share) {
-          navigator.share({
-            title: 'Krypto - Share encrypted message',
-            url: qrLink
-          }).then(() => { 
-            animateText($('#shareButton'), 'Shared successfully!');
-          })
-          .catch(console.error);
-        } else {
-          animateText($('#shareButton'), 'Browser not supported');
-        }
-      });
-
-      $('#copyButton').on("click", (e) => {
-        console.log('copia');
-        const elem = document.createElement('textarea');
-        elem.value = qrLink;
-        document.body.appendChild(elem);
-        elem.select();
-        document.execCommand('copy');
-        document.body.removeChild(elem);
-
-        var button = $('#copyButton');
-        animateText(button, 'Copied to clipboard!');
-      });
-  
-      $('#downloadButton').on("click", (e) => {
-        console.log('download');
-        this.downloadImage(imageSrc);
-        animateText($('#downloadButton'), 'Image downloaded!');
-      });
-  
-      $('#emailButton').on("click", (e) => {
-        console.log('email');
-        window.open('mailto:?subject=Krypto - Share encrypted message&body=' + qrLink);
-        animateText($('#emailButton'), 'Email sent!');
-      });
-
-      $(".app-content").fadeTo("slow", 1);
+      })
       
     } else {
       //TODO enc object file
