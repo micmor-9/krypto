@@ -21,7 +21,19 @@
       }
     }
 
-    function getObectId() {
+    function getData() {
+      $data = array(
+        'objectID'  => $this->getObjectId(),
+        'timeout'   => $this->getTimeout(),
+        'content'   => $this->getContent(),
+        'user'      => $this->getUser(),
+        'fileDownloadLink' => $this->getFileDownloadLink()
+      );
+
+      return $data;
+    }
+
+    function getObjectId() {
       return $this->obj_id;
     }
 
@@ -34,7 +46,9 @@
     }
 
     function getUser() {
-      return $this->user_id;
+      $user = User::getUserById($this->user_id);
+
+      return $user->getData();
     }
 
     function getTimeout() {
@@ -48,6 +62,8 @@
     function insertObject($key) {
       $db = new Database();
       $conn = $db->getConnection();
+
+      $result = array(); 
 
       $stmt = $conn->prepare("INSERT INTO pass_key (key_value, key_length) VALUES (?, ?)");
       if($stmt == FALSE) {
@@ -66,9 +82,11 @@
         $this->key_id = $conn->insert_id;
         $stmt->close();
       } else {
+        $result['status'] = 'error';
+        $result['output'] = $stmt->error;
         $stmt->close();
         $db->closeConnection();
-        return $stmt->error;
+        return $result;
       }
 
       //Generate 8-char unique ID from key
@@ -95,20 +113,55 @@
 
       $stmt->execute();
       if($stmt->errno == 0) {
+        $result['status'] = 'success';
+        $result['output'] = $this->obj_id;
         $stmt->close();
         $db->closeConnection();
-        return $this->obj_id;
+        return $result;
       } else {
-        $error = $stmt->error;
+        $result['status'] = 'error';
+        $result['output'] = $stmt->error;
         $stmt->close();
         $db->closeConnection();
-        return $error;
+        return $result;
       }
     }
 
-    
+    static function getObjectById($id) {
+      $db = new Database();
+      $conn = $db->getConnection();
 
+      $stmt = $conn->prepare("SELECT * FROM encrypted_object WHERE obj_id = (?)");
+      if($stmt == false) {
+        die('prepare() failed: ' . htmlspecialchars($conn->error));
+      }
 
+      $stmt->bind_param("s", $id);
+      if ( $stmt == false ) {
+        die('bind_param() failed: ' . htmlspecialchars($stmt->error));
+      }
+
+      $stmt->execute();
+      if($stmt->errno == 0) {
+        $res = $stmt->get_result();
+        $encrypted_object = $res->fetch_assoc();
+
+        if($encrypted_object) {
+          $_object = new EncryptedObject($encrypted_object['timeout'], $encrypted_object['content'], $encrypted_object['user_id'], $encrypted_object['obj_id'], $encrypted_object['file_download_link']);
+          $stmt->close();
+          $db->closeConnection();
+          return $_object;
+        } else {
+          $stmt->close();
+          $db->closeConnection();
+          return false;
+        }
+      } else {
+        $stmt->close();
+        $db->closeConnection();
+        return false;
+      }
+    }
 
   }
 

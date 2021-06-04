@@ -58,14 +58,7 @@ export default class Decryption extends AbstractView {
         values["decryptionKey"]
       ).toString();
 
-      console.log(encryptedMessage);
-
       //ajax call to insert the encrypted message in DB and returns hashed identifier for retrieving items
-
-      var qrImage =
-        '<img src="https://api.qrserver.com/v1/create-qr-code/?data=' +
-        values["encryptedMessage"] +
-        '&size=100x100" alt="" title="" />';
 
       var newContent =
         `<a href="decryption" class="btn btn-link px-0" role="button" data-link>&larr; back</a>
@@ -99,69 +92,114 @@ export default class Decryption extends AbstractView {
   }
 
   charCounterUpdate() {
-    let keyLength = $("input[name='decryptionKeyLength']:checked").val();
     $("#keyCharacterCounter").html(
       $("#decryptionKey").val().length
     );
   }
 
   async getHtml() {
-    return (
-      `<div class="container">
-    <h1>Decryption</h1>
-    <div class="app-content">
-    <div class="app-content-overlay">
-    <form name="decryptionForm" id="decryptionForm" method="post" class="col-12 col-lg-8 col-xl-5 mr-auto my-3 needs-validation" novalidate>
-    <div class="row my-1">
-      <label for="decryptionObjectType" class="col-sm-4 col-form-label my-2">Choose </label>
-      <div class="col my-2">
-        <div class="btn-group" role="group" aria-label="decryption Object Type">
-          <input type="radio" class="btn-check" name="decryptionObjectType" id="encObjMessage" value="msg" autocomplete="off" checked>
-          <label class="btn btn-outline-primary" for="encObjMessage">Message</label>    
-          <input type="radio" class="btn-check" name="decryptionObjectType" id="encObjFile" value="file" autocomplete="off">
-          <label class="btn btn-outline-primary" for="encObjFile">File</label>
+    //Check if obj URL parameter is set
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const object = urlParams.get('obj');
+    
+    if(object != null) {
+      //If yes, ajax call to retrieve message from DB
+      $.ajax({
+        url: '../../components/ajax/decryption.php',
+        type: 'POST',
+        data: {object: object},
+        success: function(result, xhr, status) {
+          var data = $.parseJSON(result);
+          console.log(data);
+          if(data.status != 'error') {
+            if(data.fileDownloadLink == null) {
+              //Object Type: message
+              console.log('message');
+              $('.decryption-object-type').fadeOut();
+              $('.decryption-file').fadeOut();
+              $('.decryption-message').fadeIn();
+
+              $('#decryptionObjectID').html('#' + data.objectID);
+              $('#decryptionTimeout').val(data.timeout);
+              $('.decryption-timeout').fadeIn();
+
+              $('#decryptionMessage').prop('disabled', true);
+              $('#decryptionMessage').val(data.content);
+
+              $('.app-content').before('<span class="badge bg-primary">Created by ' + data.user.firstName + ' ' + data.user.lastName + '</span>');
+
+
+            } else {
+              //Object Type: file
+              console.log('file');
+              $('.decryption-object-type').fadeOut();
+              $('.decryption-message').fadeOut();
+              $('.decryption-file').fadeIn();
+            }
+          }
+        }
+      });
+    }
+
+    const htmlContent =`<div class="container">
+      <h1>Decryption <small class="text-muted" id="decryptionObjectID"></small></h1>
+      <div class="app-content">
+      <div class="app-content-overlay">
+      <form name="decryptionForm" id="decryptionForm" method="post" class="col-12 col-lg-8 col-xl-5 mr-auto my-3 needs-validation" novalidate>
+      <div class="row my-1 decryption-object-type">
+        <label for="decryptionObjectType" class="col-sm-4 col-form-label my-2">Choose </label>
+        <div class="col my-2">
+          <div class="btn-group" role="group" aria-label="decryption Object Type">
+            <input type="radio" class="btn-check" name="decryptionObjectType" id="encObjMessage" value="msg" autocomplete="off" checked>
+            <label class="btn btn-outline-primary" for="encObjMessage">Message</label>    
+            <input type="radio" class="btn-check" name="decryptionObjectType" id="encObjFile" value="file" autocomplete="off">
+            <label class="btn btn-outline-primary" for="encObjFile">File</label>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="row my-1 decryption-message">
-      <div class="col my-2">
-        <label for="decryptionMessage" class="form-label">Your message</label>
-        <textarea class="form-control" id="decryptionMessage" name="decryptionMessage" rows="10" required></textarea>
-        <span class="character-counter" id="messageCharacterCounter">0/` +
-      maxMessageLength +
-      `</span>
-      <div class="invalid-feedback">The message field cannot be empty.</div>
+      <div class="row my-1 decryption-timeout">
+        <label for="decryptionTimeout" class="col-sm-4 col-form-label my-2">Timeout</label>
+        <div class="col my-2">
+          <input type="date" class="form-control" id="decryptionTimeout" name="decryptionTimeout" value="" disabled>
+        </div>
       </div>
-    </div>
-    <div class="row my-1">
-      <label for="decryptionFile" class="decryption-file col-sm-4 col-form-label my-2">Upload your file</label>
-      <div class="col my-2"> 
-        <input type="file" class="decryption-file form-control" id="decryptionFile" name="decryptionFile">
+      <div class="row my-1 decryption-message">
+        <div class="col my-2">
+          <label for="decryptionMessage" class="form-label">Your message</label>
+          <textarea class="form-control" id="decryptionMessage" name="decryptionMessage" rows="10" required></textarea>
+          <span class="character-counter" id="messageCharacterCounter">0/` +
+        maxMessageLength +
+        `</span>
+        <div class="invalid-feedback">The message field cannot be empty.</div>
+        </div>
       </div>
-    </div>
-    <div class="row my-1">
-      <label for="decryptionKey" class="col-sm-4 col-form-label my-2">Your key</label>
-      <div class="col my-2">
-          <input type="text" class="form-control" id="decryptionKey" name="decryptionKey" maxlength="` +
-      keyLengths[2] / 8 +
-      `" pattern=".{` +
-      keyLengths[2] / 8 +
-      `}" required>          
-        <div class="invalid-feedback">The key field must have the correct length.</div>
-        <span class="character-counter" id="keyCharacterCounter">0</span>
+      <div class="row my-1 decryption-file">
+        <label for="decryptionFile" class="decryption-file col-sm-4 col-form-label my-2">Upload your file</label>
+        <div class="col my-2"> 
+          <input type="file" class="decryption-file form-control" id="decryptionFile" name="decryptionFile">
+        </div>
       </div>
-    </div>
-    
-    <div class="row my-1">
-      <div class="col my-2">
-        <button class="btn btn-primary" type="submit">Decrypt</button>
+      <div class="row my-1">
+        <label for="decryptionKey" class="col-sm-4 col-form-label my-2">Your key</label>
+        <div class="col my-2">
+          <input type="text" class="form-control" id="decryptionKey" name="decryptionKey" maxlength="32" required>          
+          <div class="invalid-feedback">The key field must have the correct length.</div>
+          <span class="character-counter" id="keyCharacterCounter">0</span>
+        </div>
       </div>
+      
+      <div class="row my-1">
+        <div class="col my-2">
+          <button class="btn btn-primary" type="submit">Decrypt</button>
+        </div>
+      </div>
+    </form>
     </div>
-  </form>
-  </div>
-  </div>
-  </div>`
-    );
+    </div>
+    </div>`;
+
+    return htmlContent;
   }
 
   loadScripts() {

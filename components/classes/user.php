@@ -22,8 +22,16 @@
       return $this->user_id;
     }
 
-    function getUserData() {
-      return array($this->user_id, $this->first_name, $this->last_name, $this->email, $this->password, $this->birthdate);
+    function getData() {
+      $data = array(
+        'userID'  => $this->getUserId(),
+        'firstName'   => $this->getFirstName(),
+        'lastName'   => $this->getLastName(),
+        'email'      => $this->getEmail(),
+        'birthdate' => $this->getBirthdate()
+      );
+
+      return $data;
     }
 
     function getFirstName() {
