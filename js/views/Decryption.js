@@ -137,6 +137,8 @@ export default class Decryption extends AbstractView {
               $('.decryption-message').fadeOut();
               $('.decryption-file').fadeIn();
             }
+          } else {
+            $('#decryptionForm').prepend('<div class="alert alert-danger alert-dismissible fade show" role="alert">No encrypted object found with <strong>' + object +'</strong> as ID.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
           }
         }
       });
