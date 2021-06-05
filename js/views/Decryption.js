@@ -4,7 +4,6 @@
 
 import AbstractView from "./AbstractView.js";
 
-const maxMessageLength = 400;
 const keyLengths = [128, 192, 256];
 
 export default class Decryption extends AbstractView {
@@ -17,7 +16,7 @@ export default class Decryption extends AbstractView {
     $("#decryptionForm").submit((event) => {
       //TODO decryptionHandler
 
-      /* var form = document.getElementById("decryptionForm");
+      var form = document.getElementById("decryptionForm");
       var success = form.checkValidity();
       if (!success) {
         event.preventDefault();
@@ -35,10 +34,9 @@ export default class Decryption extends AbstractView {
       event.preventDefault();
 
       //Validations
-      let today = new Date();
       if (values["decryptionObjectType"] == "msg") {
-        if (values["decryptionMessage"].length > maxMessageLength) {
-          success = false;
+        if (values["decryptionMessage"] == null) {
+          values["decryptionMessage"] = $('#decryptionMessage').val();
         }
       } else {
         //check if file has been uploaded successfully
@@ -46,29 +44,28 @@ export default class Decryption extends AbstractView {
 
       if (success) {
         this.decryptionResult(values);
-      } */
+      }
     });
   }
 
   decryptionResult(values) {
-    $(".app-content").fadeTo("slow", 0.4);
+    $(".app-content").fadeTo(1000, 0.4);
     if (values["decryptionObjectType"] == "msg") {
-      var encryptedMessage = CryptoJS.AES.encrypt(
-        values["decryptionMessage"],
-        values["decryptionKey"]
-      ).toString();
+
+      var decrypted = this.decrypt(values["decryptionMessage"], values["decryptionKey"], values["decryptionKey"].length);
+      var decryptedMessage = decrypted.toString(CryptoJS.enc.Utf8);
 
       //ajax call to insert the encrypted message in DB and returns hashed identifier for retrieving items
 
       var newContent =
-        `<a href="decryption" class="btn btn-link px-0" role="button" data-link>&larr; back</a>
+        `<button onclick="history.back()" class="btn btn-link px-0" role="button" data-link>&larr; back</button>
       <h3>Result</h3>
       <form name="decryptionForm" id="decryptionForm" method="post" class="col-12 col-lg-8 col-xl-5 mr-auto mb-3 needs-validation" novalidate>
       <div class="row my-1 decryption-message">
         <div class="col my-2">
-          <label for="decryptionMessage" class="form-label">Your encrypted message</label>
+          <label for="decryptionMessage" class="form-label">Your decrypted message</label>
           <textarea class="form-control" id="decryptionMessage" name="decryptionMessage" rows="10" disabled>` +
-        encryptedMessage +
+        decryptedMessage +
         `</textarea>
         </div>
       </div>
@@ -85,13 +82,36 @@ export default class Decryption extends AbstractView {
       </form>
       </div>`;
 
-      $(".app-content").html(newContent);
-      $(".app-content").fadeTo("slow", 1);
+      setTimeout(() => {$(".app-content").html(newContent)}, 1000);
+      $(".app-content").fadeTo(1000, 1);
 
     }
   }
 
+  decrypt (transitmessage, pass, keyLength) {
+    var keySize = keyLength*8;
+    var ivSize = 128;
+    var iterations = 100;
+
+    var salt = CryptoJS.enc.Hex.parse(transitmessage.substr(0, 32));
+    var iv = CryptoJS.enc.Hex.parse(transitmessage.substr(32, 32))
+    var encrypted = transitmessage.substring(64);
+    
+    var key = CryptoJS.PBKDF2(pass, salt, {
+        keySize: keySize/32,
+        iterations: iterations
+      });
+  
+    var decrypted = CryptoJS.AES.decrypt(encrypted, key, { 
+      iv: iv, 
+      padding: CryptoJS.pad.Pkcs7,
+      mode: CryptoJS.mode.CBC
+    })
+    return decrypted;
+  }
+
   charCounterUpdate() {
+    //TODO check keylength integrity
     $("#keyCharacterCounter").html(
       $("#decryptionKey").val().length
     );
@@ -111,28 +131,36 @@ export default class Decryption extends AbstractView {
         data: {object: object},
         success: function(result, xhr, status) {
           var data = $.parseJSON(result);
-          console.log(data);
           if(data.status != 'error') {
+            var today = new Date();
+            var timeout_date = new Date(data.timeout.split('-'));
+
             if(data.fileDownloadLink == null) {
               //Object Type: message
-              console.log('message');
               $('.decryption-object-type').fadeOut();
               $('.decryption-file').fadeOut();
               $('.decryption-message').fadeIn();
 
               $('#decryptionObjectID').html('#' + data.objectID);
-              $('#decryptionTimeout').val(data.timeout);
-              $('.decryption-timeout').fadeIn();
+              $('.decryption-message').before('<div class="row my-1 decryption-timeout"><label for="decryptionTimeout" class="col-sm-4 col-form-label my-2">Timeout</label><div class="col my-2"><input type="date" class="form-control" id="decryptionTimeout" name="decryptionTimeout" value="' + data.timeout + '" disabled></div></div>');
 
               $('#decryptionMessage').prop('disabled', true);
-              $('#decryptionMessage').val(data.content);
+              if(today < timeout_date) {
+                //Timeout hasn't expired
+                $('#decryptionMessage').val(data.content);
+              } else {
+                //Timeout has expired
+                $('#decryptionMessage').val(('*').repeat(data.content.length));
+                $('.decryption-timeout').before('<div class="alert alert-warning alert-dismissible fade show" role="alert">Timeout has expired. You can\'t decrypt this object anymore.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                $('#decryptionKey').prop('disabled', true);
+                $('button[type="submit"]').prop('disabled', true);
+              }
+              
+              $('#decryptionMessage').trigger('input');
 
               $('.app-content').before('<span class="badge bg-primary">Created by ' + data.user.firstName + ' ' + data.user.lastName + '</span>');
-
-
             } else {
               //Object Type: file
-              console.log('file');
               $('.decryption-object-type').fadeOut();
               $('.decryption-message').fadeOut();
               $('.decryption-file').fadeIn();
@@ -160,19 +188,11 @@ export default class Decryption extends AbstractView {
           </div>
         </div>
       </div>
-      <div class="row my-1 decryption-timeout">
-        <label for="decryptionTimeout" class="col-sm-4 col-form-label my-2">Timeout</label>
-        <div class="col my-2">
-          <input type="date" class="form-control" id="decryptionTimeout" name="decryptionTimeout" value="" disabled>
-        </div>
-      </div>
       <div class="row my-1 decryption-message">
         <div class="col my-2">
           <label for="decryptionMessage" class="form-label">Your message</label>
           <textarea class="form-control" id="decryptionMessage" name="decryptionMessage" rows="10" required></textarea>
-          <span class="character-counter" id="messageCharacterCounter">0/` +
-        maxMessageLength +
-        `</span>
+          <span class="character-counter" id="messageCharacterCounter">0</span>
         <div class="invalid-feedback">The message field cannot be empty.</div>
         </div>
       </div>
@@ -185,7 +205,7 @@ export default class Decryption extends AbstractView {
       <div class="row my-1">
         <label for="decryptionKey" class="col-sm-4 col-form-label my-2">Your key</label>
         <div class="col my-2">
-          <input type="text" class="form-control" id="decryptionKey" name="decryptionKey" maxlength="32" required>          
+          <input type="text" class="form-control" id="decryptionKey" name="decryptionKey" minlength="16" maxlength="32" required>          
           <div class="invalid-feedback">The key field must have the correct length.</div>
           <span class="character-counter" id="keyCharacterCounter">0</span>
         </div>

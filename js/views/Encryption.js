@@ -64,12 +64,9 @@ export default class Encryption extends AbstractView {
   encryptionResult(values) {
     $(".app-content").fadeTo("slow", 0.4);
     if (values["encryptionObjectType"] == "msg") {
-      var encryptedMessage = CryptoJS.AES.encrypt(
-        values["encryptionMessage"],
-        values["encryptionKey"]
-      ).toString();
 
-      var ajaxResult;
+      var encryptedMessage = this.encrypt(values["encryptionMessage"], values["encryptionKey"], values["encryptionKey"].length);
+
       values["encryptionUserID"] = $('#loggedUserID').val();
 
       //TODO ajax call to insert the encrypted message in DB and returns hashed identifier for retrieving items
@@ -120,7 +117,7 @@ export default class Encryption extends AbstractView {
               <div class="row qr-code-area">
                 <div>Your QR Code</div>
                 <div class="col-4 col-lg-6 col-xl-4 my-2">
-                  <div>` + qrImage +`</div>
+                  <div><a href="`+ qrLink +`">` + qrImage +`</a></div>
                 </div>
                 <div class="col-8 col-lg-6 col-xl-5 my-2 d-grid">
                   <div class="btn-group-vertical">
@@ -155,7 +152,6 @@ export default class Encryption extends AbstractView {
             }
 
             $('#shareButton').on("click", (e) => {
-              console.log('share');
               if (navigator.share) {
                 navigator.share({
                   title: 'Krypto - Share encrypted message',
@@ -170,7 +166,6 @@ export default class Encryption extends AbstractView {
             });
 
             $('#copyButton').on("click", (e) => {
-              console.log('copia');
               const elem = document.createElement('textarea');
               elem.value = qrLink;
               document.body.appendChild(elem);
@@ -183,13 +178,11 @@ export default class Encryption extends AbstractView {
             });
         
             $('#downloadButton').on("click", (e) => {
-              console.log('download');
               this.downloadImage(imageSrc);
               animateText($('#downloadButton'), 'Image downloaded!');
             });
         
             $('#emailButton').on("click", (e) => {
-              console.log('email');
               window.open('mailto:?subject=Krypto - Share encrypted message&body=' + qrLink);
               animateText($('#emailButton'), 'Email sent!');
             });
@@ -226,6 +219,30 @@ export default class Encryption extends AbstractView {
     } else {
       //TODO enc object file
     }
+  }
+
+  encrypt (msg, pass, keyLength) {
+    var keySize = keyLength*8;
+    var iterations = 100;
+
+    var salt = CryptoJS.lib.WordArray.random(128/8);
+    
+    var key = CryptoJS.PBKDF2(pass, salt, {
+        keySize: keySize/32,
+        iterations: iterations
+      });
+  
+    var iv = CryptoJS.lib.WordArray.random(128/8);
+    
+    var encrypted = CryptoJS.AES.encrypt(msg, key, { 
+      iv: iv, 
+      padding: CryptoJS.pad.Pkcs7,
+      mode: CryptoJS.mode.CBC
+      
+    });
+    
+    var transitmessage = salt.toString()+ iv.toString() + encrypted.toString();
+    return transitmessage;
   }
 
   generateKey() {

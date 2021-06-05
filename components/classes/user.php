@@ -63,16 +63,16 @@
         die('prepare() failed: ' . htmlspecialchars($conn->error));
       }
 
-      $stmt->bind_param("sssss", $email, $firstName, $lastName, $password, $birthdate);
-      if ( false == $stmt ) {
-        die('bind_param() failed: ' . htmlspecialchars($stmt->error));
-      }
-
       $email = $this->email;
       $firstName = $this->first_name;
       $lastName = $this->last_name;
       $password = password_hash($this->password, PASSWORD_DEFAULT);
       $birthdate = $this->birthdate;
+
+      $stmt->bind_param("sssss", $email, $firstName, $lastName, $password, $birthdate);
+      if ( false == $stmt ) {
+        die('bind_param() failed: ' . htmlspecialchars($stmt->error));
+      }
 
       $stmt->execute();
       if($stmt->errno == 0) {

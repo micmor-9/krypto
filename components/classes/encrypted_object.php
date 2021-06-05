@@ -70,12 +70,12 @@
         die('prepare() failed: ' . htmlspecialchars($conn->error));
       }
 
+      $key_length = strlen($key);
+
       $stmt->bind_param("si", $key, $key_length);
       if ( false == $stmt ) {
         die('bind_param() failed: ' . htmlspecialchars($stmt->error));
       }
-
-      $key_length = strlen($key);
 
       $stmt->execute();
       if($stmt->errno == 0) {
@@ -97,11 +97,6 @@
         die('prepare() failed: ' . htmlspecialchars($conn->error));
       }
 
-      $stmt->bind_param("ssssssii", $obj_id, $timeout, $content, $file_download_link, $qr_value, $qr_download_link, $user_id, $key_id);
-      if ( false == $stmt ) {
-        die('bind_param() failed: ' . htmlspecialchars($stmt->error));
-      }
-
       $obj_id = $this->obj_id;
       $timeout = $this->timeout;
       $content = $this->content;
@@ -110,6 +105,11 @@
       $qr_download_link = 'https://api.qrserver.com/v1/create-qr-code/?data='.$qr_value.'&size=150x150';
       $user_id = $this->user_id;
       $key_id = $this->key_id;
+
+      $stmt->bind_param("ssssssii", $obj_id, $timeout, $content, $file_download_link, $qr_value, $qr_download_link, $user_id, $key_id);
+      if ( false == $stmt ) {
+        die('bind_param() failed: ' . htmlspecialchars($stmt->error));
+      }
 
       $stmt->execute();
       if($stmt->errno == 0) {

@@ -10744,7 +10744,7 @@ fieldset:disabled .btn {
   max-width: 280px;
 }
 
-.password-change, .encryption-file, .decryption-file, .decryption-timeout {
+.password-change, .encryption-file, .decryption-file {
   display: none;
 }
 
