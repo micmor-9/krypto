@@ -17,7 +17,7 @@
           <input type="hidden" id="loggedUserID" value="<?php echo $loggedUser->getUserId(); ?>">
         </a>
         <ul class="dropdown-menu text-small shadow" aria-labelledby="userDropdown">
-          <li><a class="dropdown-item" href="logout">Sign out</a></li>
+          <li><a class="dropdown-item" href="logout">Logout</a></li>
         </ul>
       </div>
       </ul>

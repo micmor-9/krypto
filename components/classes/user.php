@@ -158,6 +158,44 @@
       }
     }
 
+    static function getArchive( $user_id ) {
+      $db = new Database();
+      $conn = $db->getConnection();
+
+      $stmt = $conn->prepare("SELECT obj_id, timeout, content, file_download_link, key_value FROM encrypted_object, pass_key WHERE user_id = (?) AND encrypted_object.key_id = pass_key.key_id");
+      if($stmt == false) {
+        die('prepare() failed: ' . htmlspecialchars($conn->error));
+      }
+
+      $stmt->bind_param("i", $user_id);
+      if ( $stmt == false ) {
+        die('bind_param() failed: ' . htmlspecialchars($stmt->error));
+      }
+
+      $stmt->execute();
+      if($stmt->errno == 0) {
+        $res = $stmt->get_result();
+        $objects = array();
+        
+        if($res->num_rows > 0) {
+          while($_object = $res->fetch_assoc()) {
+            array_push($objects, $_object);
+          }
+          $stmt->close();
+          $db->closeConnection();
+          return $objects;
+        } else {
+          $stmt->close();
+          $db->closeConnection();
+          return false;
+        }
+      } else {
+        $stmt->close();
+        $db->closeConnection();
+        return $stmt->error;
+      }
+    }
+
     function checkPassword( $psw ) {
       return password_verify($psw, $this->password);
     }

@@ -6,6 +6,7 @@
     private $timeout;
     private $content;
     private $key_id;
+    private $key;
     private $user_id;
     private $file_download_link;
 
@@ -42,7 +43,40 @@
     }
 
     function getKey() {
-      return $this->key_id;
+      $db = new Database();
+      $conn = $db->getConnection();
+
+      $stmt = $conn->prepare("SELECT * FROM pass_key WHERE key_id = (?)");
+      if($stmt == false) {
+        die('prepare() failed: ' . htmlspecialchars($conn->error));
+      }
+
+      $stmt->bind_param("i", $this->key_id);
+      if ( $stmt == false ) {
+        die('bind_param() failed: ' . htmlspecialchars($stmt->error));
+      }
+
+      $stmt->execute();
+      if($stmt->errno == 0) {
+        $res = $stmt->get_result();
+        $key = $res->fetch_assoc();
+
+        if($key) {
+          $_key = $key['key_value'];
+          $stmt->close();
+          $db->closeConnection();
+          $this->key = $_key;
+          return $_key;
+        } else {
+          $stmt->close();
+          $db->closeConnection();
+          return false;
+        }
+      } else {
+        $stmt->close();
+        $db->closeConnection();
+        return false;
+      }
     }
 
     function getUser() {

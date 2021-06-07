@@ -227,7 +227,7 @@ export default class Decryption extends AbstractView {
   loadScripts() {
     $("#decryptionMessage").on("input", function () {
       $("#messageCharacterCounter").html(
-        $(this).val().length + "/" + maxMessageLength
+        $(this).val().length
       );
     });
 
