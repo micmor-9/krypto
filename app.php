@@ -14,7 +14,6 @@
       <div class="dropdown">
         <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
           <strong><?php echo $loggedUser->getFirstName().' '.$loggedUser->getLastName();?></strong>
-          <input type="hidden" id="loggedUserID" value="<?php echo $loggedUser->getUserId(); ?>">
         </a>
         <ul class="dropdown-menu text-small shadow" aria-labelledby="userDropdown">
           <li><a class="dropdown-item" href="logout">Logout</a></li>

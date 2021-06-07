@@ -5,16 +5,10 @@
 
   session_start();
 
-  if(isset($_POST['user_id'])) {
-    if($_POST['user_id'] == $_SESSION['uid']) {
-      //User matches the one logged in
-      $archive = User::getArchive($_POST['user_id']);
+  $user_id = $_SESSION['uid'];
 
-      die(json_encode($archive));
-    } else {
-      die('stong cca');
-    }
-    
-  }
+  //User matches the one logged in
+  $archive = User::getArchive($user_id);
+  die(json_encode($archive));    
 
 ?>

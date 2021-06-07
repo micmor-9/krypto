@@ -84,12 +84,10 @@ export default class Encryption extends AbstractView {
 
       var encryptedMessage = this.encrypt(values["encryptionMessage"], values["encryptionKey"], values["encryptionKey"].length);
 
-      values["encryptionUserID"] = $('#loggedUserID').val();
-
       $.ajax({
         url: '../../components/ajax/encryption.php',
         type: 'POST',
-        data: {content: encryptedMessage, timeout: values["encryptionTimeout"], user_id: values["encryptionUserID"], key: values["encryptionKey"]},
+        data: {content: encryptedMessage, timeout: values["encryptionTimeout"], key: values["encryptionKey"]},
         success: function(result, xhr, status) {
           var data = $.parseJSON(result);
           var resultAlert;
@@ -254,12 +252,10 @@ export default class Encryption extends AbstractView {
       var encryptedFile = this.encryptFile(encryptionFile, values['encryptionKey'], values['encryptionKey'].length);
       console.log(encryptedFile);
 
-      values["encryptionUserID"] = $('#loggedUserID').val();
-
       $.ajax({
         url: '../../components/ajax/encryption.php',
         type: 'POST',
-        data: {content: encryptedFile, timeout: values["encryptionTimeout"], user_id: values["encryptionUserID"], key: values["encryptionKey"]},
+        data: {content: encryptedFile, timeout: values["encryptionTimeout"], key: values["encryptionKey"]},
         success: function(result, xhr, status) {
           console.log(result);
           var data = $.parseJSON(result);

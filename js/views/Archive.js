@@ -11,34 +11,39 @@ export default class Archive extends AbstractView {
   }
 
   async getHtml() {
-    var userID = $('#loggedUserID').val();
     var objectHTML = "";
 
     $.ajax({
       url: '../../components/ajax/archive.php',
       type: 'POST',
-      data: {user_id: userID},
       success: function(result, xhr, status) {
-        console.log(result);
         if(result != false) {
           var data = $.parseJSON(result);        
-
           data.forEach((object) => {
-            objectHTML+= `<div class="accordion-item">
+
+            objectHTML += `<div class="accordion-item">
             <h2 class="accordion-header" id="heading-` + object['obj_id'] +`">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#object-` + object['obj_id'] +`" aria-expanded="true" aria-controls="object-` + object['obj_id'] +`">
-                ` + object['obj_id'] + `
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#object-` + object['obj_id'] + `" aria-expanded="true" aria-controls="object-` + object['obj_id'] +`">
+                <strong>#` + object['obj_id'] + `</strong>
               </button>
             </h2>
-            <div id="object-` + object['obj_id'] +`" class="accordion-collapse collapse" aria-labelledby="heading-` + object['obj_id'] +`" data-bs-parent="#archiveAccordion">
-              <div class="accordion-body">
-                <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+            <div id="object-` + object['obj_id'] +`" class="accordion-collapse collapse" aria-labelledby="heading-` + object['obj_id'] + `" data-bs-parent="#archiveAccordion">
+              <div class="accordion-body">`;
+            if(object['file_download_link'] == null) {
+              //Object Type Message
+              objectHTML += `<a href="`+ object['qr_value'] +`"><img src="` + object['qr_download_link'] + `" alt="`+ object['obj_id'] +`" title="`+ object['obj_id'] +`" style="width: 100%; max-width: 50px;" /></a>`
+            } else {
+              //Object Type File
+            }
+            objectHTML += `<input type="text" value="` + object['key_value'] + `">`;
+            objectHTML += `</div>
               </div>
-            </div>
-          </div>
-            `;
+            </div>`;
           });
 
+          $('#archiveAccordion').html(objectHTML);
+        } else {
+          objectHTML = `<div class="alert alert-warning alert-dismissible fade show" role="alert">No encrypted object found for this user.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`;
           $('#archiveAccordion').html(objectHTML);
         }
       }

@@ -162,7 +162,7 @@
       $db = new Database();
       $conn = $db->getConnection();
 
-      $stmt = $conn->prepare("SELECT obj_id, timeout, content, file_download_link, key_value FROM encrypted_object, pass_key WHERE user_id = (?) AND encrypted_object.key_id = pass_key.key_id");
+      $stmt = $conn->prepare("SELECT obj_id, timeout, content, file_download_link, qr_value, qr_download_link, key_value FROM encrypted_object, pass_key WHERE user_id = (?) AND encrypted_object.key_id = pass_key.key_id");
       if($stmt == false) {
         die('prepare() failed: ' . htmlspecialchars($conn->error));
       }

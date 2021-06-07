@@ -5,7 +5,7 @@
 
   $content = $_POST['content'];
   $timeout = $_POST['timeout'];
-  $user_id = $_POST['user_id'];
+  $user_id = $_SESSION['uid'];
   $key = $_POST['key'];
 
   if($content == null || $timeout == null || $user_id == null || $key == null) {
