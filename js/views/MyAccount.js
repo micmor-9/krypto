@@ -12,6 +12,17 @@ export default class MyAccount extends AbstractView {
 
   async getHtml() {
     //TODO get user data from db
+    $.ajax({
+      url: '../../components/ajax/my-account.php',
+      type: 'POST',
+      success: function(result, xhr, status) {
+        var userData = $.parseJSON(result);
+        $('#usrEmail').val(userData['email']);
+        $('#usrFirstName').val(userData['firstName']);
+        $('#usrLastName').val(userData['lastName']);
+        $('#usrBirthdate').val(userData['birthdate']);
+      }
+    });
 
     return `<div class="container">
     <h1>My Account</h1>
@@ -19,7 +30,7 @@ export default class MyAccount extends AbstractView {
     <div class="row my-1">
       <div class="col my-2">
         <div class="form-floating">
-          <input type="email" class="form-control" name="usrEmail" id="usrEmail" value="name@example.com" disabled>
+          <input type="email" class="form-control" name="usrEmail" id="usrEmail" value="" disabled>
           <label for="usrEmail">Email address</label>
         </div>
       </div>
@@ -49,13 +60,13 @@ export default class MyAccount extends AbstractView {
     <div class="row my-1">
       <div class="col-12 col-md-6 my-2">
         <div class="form-floating">
-          <input type="text" class="form-control" name="usrFirstName" id="usrFirstName" value="First Name">
+          <input type="text" class="form-control" name="usrFirstName" id="usrFirstName" value="">
           <label for="usrFirstName" class="form-label">First Name</label>
         </div>
       </div>
       <div class="col-12 col-md-6 my-2">
         <div class="form-floating">
-          <input type="text" class="form-control" name="usrLastName" id="usrLastName" value="Last Name">
+          <input type="text" class="form-control" name="usrLastName" id="usrLastName" value="">
           <label for="usrLastName" class="form-label">Last Name</label>
           </div>
           </div>
@@ -63,7 +74,7 @@ export default class MyAccount extends AbstractView {
     <div class="row my-1">
       <div class="col-12 col-md-6 my-2">
         <div class="form-floating">
-          <input type="date" class="form-control" name="usrBirthdate" id="usrBirthdate" value="1999-01-03">
+          <input type="date" class="form-control" name="usrBirthdate" id="usrBirthdate" value="">
           <label for="usrBirthdate" class="form-label">Birthdate</label>
         </div>
       </div>

@@ -1,10 +1,10 @@
 $theme-colors: (
   "primary": #9382e7,
   "secondary": #5c2751,
+  "danger":     #dc3545,
   /*"success":    $success,
   "info":       $info,
   "warning":    $warning,
-  "danger":     $danger,
   "light":      $light,
   "dark":       $dark */
 );
@@ -86,4 +86,8 @@ span.character-counter {
 
 .qr-code-area .btn {
   text-align: left;
+}
+
+.accordion-button:not(.collapsed) {
+  color: #9382e7;
 }

@@ -80,6 +80,7 @@ export default class Encryption extends AbstractView {
 
   encryptionResult(values) {
     $(".app-content").fadeTo("slow", 0.4);
+
     if (values["encryptionObjectType"] == "msg") {
 
       var encryptedMessage = this.encrypt(values["encryptionMessage"], values["encryptionKey"], values["encryptionKey"].length);
@@ -88,10 +89,16 @@ export default class Encryption extends AbstractView {
         url: '../../components/ajax/encryption.php',
         type: 'POST',
         data: {content: encryptedMessage, timeout: values["encryptionTimeout"], key: values["encryptionKey"]},
-        success: function(result, xhr, status) {
-          var data = $.parseJSON(result);
+        success: (result, xhr, status) => {
+          try {
+            var data = $.parseJSON(result);
+            var status = data['status'];
+          } catch (e) {
+            status = 'error';
+            console.log(result);
+          }
           var resultAlert;
-          if(data['status'] == 'success') {
+          if(status == 'success') {
             //If encryption was successful
             resultAlert = `<h3>Result <small class="text-muted">#` + data['output'] + `</small></h3>
             <div class="row">
@@ -123,7 +130,7 @@ export default class Encryption extends AbstractView {
                   <input type="text" class="form-control" id="encryptionKey" name="encryptionKey" value="` +
               values["encryptionKey"] +
               `" disabled>
-                <button class="btn btn-primary" type="button" id="copyKey" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy key to clipboard"><i class="bi bi-clipboard"></i></button>          
+                <button class="btn btn-primary" type="button" id="copyKey" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy key to clipboard"><i class="bi bi-clipboard"></i></button>
                 </div>
             </div>
             </div>
@@ -149,71 +156,10 @@ export default class Encryption extends AbstractView {
 
             $(".app-content").html(newContent);
 
+            this.encryptionScripts(qrLink, imageSrc);
+
             var copyKeyButton = document.getElementById("copyKey");
             var tooltip = new bootstrap.Tooltip(copyKeyButton);
-
-            const animateText = (object, text) => {
-              function _animate(object, text) {
-                object.animate({opacity: 0},"slow");
-                object.queue(function() {
-                  object.html(text);
-                  object.dequeue(); 
-                });
-                object.animate({opacity:'1'},"slow");
-              }
-              
-              let content = object.html();
-              _animate(object, text);
-              setTimeout(() => {
-                _animate(object, content);
-              }, 2000);
-            }
-
-            $('#shareButton').on("click", (e) => {
-              if (navigator.share) {
-                navigator.share({
-                  title: 'Krypto - Share encrypted message',
-                  url: qrLink
-                }).then(() => { 
-                  animateText($('#shareButton'), 'Shared successfully!');
-                })
-                .catch(console.error);
-              } else {
-                animateText($('#shareButton'), 'Browser not supported');
-              }
-            });
-
-            $('#copyButton').on("click", (e) => {
-              const elem = document.createElement('textarea');
-              elem.value = qrLink;
-              document.body.appendChild(elem);
-              elem.select();
-              document.execCommand('copy');
-              document.body.removeChild(elem);
-
-              var button = $('#copyButton');
-              animateText(button, 'Copied to clipboard!');
-            });
-
-            $('#copyKey').on("click", (e) => {
-              const elem = document.createElement('textarea');
-              elem.value = $('#encryptionKey').val();
-              document.body.appendChild(elem);
-              elem.select();
-              document.execCommand('copy');
-              document.body.removeChild(elem);
-
-            });
-        
-            $('#downloadButton').on("click", (e) => {
-              this.downloadImage(imageSrc);
-              animateText($('#downloadButton'), 'Image downloaded!');
-            });
-        
-            $('#emailButton').on("click", (e) => {
-              window.open('mailto:?subject=Krypto - Share encrypted message&body=' + qrLink);
-              animateText($('#emailButton'), 'Email sent!');
-            });
 
             $(".app-content").fadeTo("slow", 1);
           } else {
@@ -223,6 +169,7 @@ export default class Encryption extends AbstractView {
             <form class="col-12 col-lg-7 col-xl-6 mr-auto mb-3">
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
               There has been an error during the encryption process. <a href="encryption" class="alert-link">Retry</a>
+              ` + result +`
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>`;
 
@@ -256,11 +203,16 @@ export default class Encryption extends AbstractView {
         url: '../../components/ajax/encryption.php',
         type: 'POST',
         data: {content: encryptedFile, timeout: values["encryptionTimeout"], key: values["encryptionKey"]},
-        success: function(result, xhr, status) {
-          console.log(result);
-          var data = $.parseJSON(result);
+        success: (result, xhr, status) => {
+          try {
+            var data = $.parseJSON(result);
+            var status = data['status'];
+          } catch (e) {
+            status = 'error';
+            console.log(result);
+          }
           var resultAlert;
-          if(data['status'] == 'success') {
+          if(status == 'success') {
             //If encryption was successful
             resultAlert = `<h3>Result <small class="text-muted">#` + data['output'] + `</small></h3>
             <div class="row">
@@ -317,41 +269,7 @@ export default class Encryption extends AbstractView {
 
             $(".app-content").html(newContent); 
 
-            $('#shareButton').on("click", (e) => {
-              if (navigator.share) {
-                navigator.share({
-                  title: 'Krypto - Share encrypted message',
-                  url: qrLink
-                }).then(() => { 
-                  animateText($('#shareButton'), 'Shared successfully!');
-                })
-                .catch(console.error);
-              } else {
-                animateText($('#shareButton'), 'Browser not supported');
-              }
-            });
-
-            $('#copyButton').on("click", (e) => {
-              const elem = document.createElement('textarea');
-              elem.value = qrLink;
-              document.body.appendChild(elem);
-              elem.select();
-              document.execCommand('copy');
-              document.body.removeChild(elem);
-
-              var button = $('#copyButton');
-              animateText(button, 'Copied to clipboard!');
-            });
-        
-            $('#downloadButton').on("click", (e) => {
-              this.downloadImage(imageSrc);
-              animateText($('#downloadButton'), 'Image downloaded!');
-            });
-        
-            $('#emailButton').on("click", (e) => {
-              window.open('mailto:?subject=Krypto - Share encrypted message&body=' + qrLink);
-              animateText($('#emailButton'), 'Email sent!');
-            });
+            this.encryptionScripts(qrLink, imageSrc);            
 
             $(".app-content").fadeTo("slow", 1);
           } else {
@@ -383,6 +301,59 @@ export default class Encryption extends AbstractView {
       }) 
       
     }
+  }
+
+  encryptionScripts(qrLink, imageSrc) {
+    $('#shareButton').on("click", (e) => {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Krypto - Share encrypted message',
+          url: qrLink
+        }).then(() => { 
+          this.animateText($('#shareButton'), 'Shared successfully!');
+        })
+        .catch(console.error);
+      } else {
+        this.animateText($('#shareButton'), 'Browser not supported');
+      }
+    });
+
+    $('#copyButton').on("click", (e) => {
+      const elem = document.createElement('textarea');
+      elem.value = qrLink;
+      document.body.appendChild(elem);
+      elem.select();
+      document.execCommand('copy');
+      document.body.removeChild(elem);
+
+      var button = $('#copyButton');
+      this.animateText(button, 'Copied to clipboard!');
+    });
+
+    $('#copyKey').on("click", (e) => {
+      const elem = document.createElement('textarea');
+      elem.value = $('#encryptionKey').val();
+      document.body.appendChild(elem);
+      elem.select();
+      document.execCommand('copy');
+      document.body.removeChild(elem);
+      $('#copyKey i').removeClass('bi-clipboard');
+      $('#copyKey i').addClass('bi-check2');
+      setTimeout(() => {
+        $('#copyKey i').removeClass('bi-check2');
+        $('#copyKey i').addClass('bi-clipboard');
+      }, 1500)
+    });
+
+    $('#downloadButton').on("click", (e) => {
+      this.downloadImage(imageSrc);
+      this.animateText($('#downloadButton'), 'Image downloaded!');
+    });
+
+    $('#emailButton').on("click", (e) => {
+      window.open('mailto:?subject=Krypto - Share encrypted message&body=' + qrLink);
+      this.animateText($('#emailButton'), 'Email sent!');
+    });
   }
 
   encrypt (msg, pass, keyLength) {

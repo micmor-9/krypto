@@ -197,6 +197,32 @@
       }
     }
 
+    static function deleteObject($id) {
+      $db = new Database();
+      $conn = $db->getConnection();
+
+      $stmt = $conn->prepare("DELETE FROM encrypted_object WHERE obj_id = (?)");
+      if($stmt == false) {
+        die('prepare() failed: ' . htmlspecialchars($conn->error));
+      }
+
+      $stmt->bind_param("s", $id);
+      if ( $stmt == false ) {
+        die('bind_param() failed: ' . htmlspecialchars($stmt->error));
+      }
+
+      $stmt->execute();
+      if($stmt->errno == 0) {
+        $stmt->close();
+        $db->closeConnection();
+        return true;
+      } else {
+        $stmt->close();
+        $db->closeConnection();
+        return false;
+      }
+    }
+
   }
 
 ?>

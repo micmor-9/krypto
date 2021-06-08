@@ -14,7 +14,6 @@ export default class Decryption extends AbstractView {
 
   decryptionHandler() {
     $("#decryptionForm").submit((event) => {
-      //TODO decryptionHandler
 
       var form = document.getElementById("decryptionForm");
       var success = form.checkValidity();
@@ -39,7 +38,7 @@ export default class Decryption extends AbstractView {
           values["decryptionMessage"] = $('#decryptionMessage').val();
         }
       } else {
-        //check if file has been uploaded successfully
+        //TODO check if file has been uploaded successfully
       }
 
       if (success) {
@@ -55,10 +54,13 @@ export default class Decryption extends AbstractView {
       var decrypted = this.decrypt(values["decryptionMessage"], values["decryptionKey"], values["decryptionKey"].length);
       var decryptedMessage = decrypted.toString(CryptoJS.enc.Utf8);
 
-      //ajax call to insert the encrypted message in DB and returns hashed identifier for retrieving items
+      if(decryptedMessage == '') {
+        //Key is wrong, message can't be decrypted
+        decryptedMessage = ('•').repeat(values["decryptionMessage"].length);
+      }
 
       var newContent =
-        `<button onclick="history.back()" class="btn btn-link px-0" role="button" data-link>&larr; back</button>
+        `<button onclick="history.back()" class="btn btn-link px-0" role="button">&larr; back</button>
       <h3>Result</h3>
       <form name="decryptionForm" id="decryptionForm" method="post" class="col-12 col-lg-8 col-xl-5 mr-auto mb-3 needs-validation" novalidate>
       <div class="row my-1 decryption-message">
@@ -82,7 +84,12 @@ export default class Decryption extends AbstractView {
       </form>
       </div>`;
 
-      setTimeout(() => {$(".app-content").html(newContent)}, 1000);
+      setTimeout(() => {
+        $(".app-content").html(newContent)
+        if(decryptedMessage.indexOf('•') >= 0) {
+          $('#decryptionForm').prepend('<div class="alert alert-warning alert-dismissible fade show" role="alert">The key is wrong, please try again with a different key.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+        }
+      }, 1000);
       $(".app-content").fadeTo(1000, 1);
 
     }

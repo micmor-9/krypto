@@ -60,12 +60,12 @@ if (isset($_GET['action'])) {
 }
 
 //Function that checks if user is logged through session or through cookie
-//If login == true, redirect to login, else to index
-function checkAuth($login = false) {
+function checkAuth() {
   //Check if a session has already been created.
   session_start();
   if (isset($_SESSION['uid']) || isset($_SESSION['logged_in'])) {
     if ((time() - $_SESSION['logged_in']) <= 3600) {
+      $_SESSION['logged_in'] = time();
       return User::getUserById($_SESSION['uid']);
     } else {
       session_unset();

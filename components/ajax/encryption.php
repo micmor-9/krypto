@@ -3,6 +3,7 @@
   require_once '../classes/database.php';
   require_once '../classes/encrypted_object.php';
 
+  session_start();
   $content = $_POST['content'];
   $timeout = $_POST['timeout'];
   $user_id = $_SESSION['uid'];
