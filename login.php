@@ -68,6 +68,7 @@ if (isset($_GET['result'])) {
         </div>
         <div class="row my-1">
           <div class="col mx-auto my-2">
+            <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#resetPassword">Lost your password?</button><br>
             <label class="form-check-label" for="usrRememberCheck">
               Remember me
               <input class="form-check-input mx-2" type="checkbox" name="usrRememberCheck" id="usrRememberCheck">
@@ -80,6 +81,26 @@ if (isset($_GET['result'])) {
           </div>
         </div>
       </form>
+      <div class="modal fade" id="resetPassword" tabindex="-1" aria-labelledby="resetPasswordLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="resetPasswordLabel">Reset your password</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-start">
+            Insert your email to reset your password
+            <div class="my-3">
+              <label for="usrEmailReset" class="form-label">Email address</label>
+              <input type="email" class="form-control" id="usrEmailReset">
+            </div>
+          </div>
+          <div class="modal-footer">            
+            <button type="button" id="modalResetButton" class="btn btn-primary">Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
     </div>
   </div>
 

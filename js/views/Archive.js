@@ -31,17 +31,23 @@ export default class Archive extends AbstractView {
               <div class="accordion-body row">`;
             if(object['file_download_link'] == null) {
               //Object Type Message
-              objectHTML += `<label for="encryptionMessage" class="form-label"><strong>Message</strong></label><div class="col-12 col-md-7 my-2"><textarea class="form-control" id="encryptionMessage-` + object['obj_id'] +`" name="encryptionMessage" rows="5" disabled>` + object['content'] + `</textarea></div>`;              
+              objectHTML += `<label for="encryptionMessage" class="form-label"><strong>Message</strong></label><div class="col-12 col-md-7 my-2"><textarea class="form-control" id="encryptionMessage-` + object['obj_id'] +`" name="encryptionMessage" rows="6" disabled>` + object['content'] + `</textarea></div>`;              
             } else {
               //Object Type File
             }
             objectHTML += `
                   <div class="col-12 col-md-5 my-2">
                     <div class="row">
-                      <div class="input-group">
+                      <div class="input-group col my-2">
                         <div class="input-group-text"><i class="bi bi-key-fill" title="Key"></i></div>
-                        <input name="encryptionKey" type="text" class="form-control" value="` + object['key_value'] + `">                      
-                        <button class="btn btn-outline-primary copy-key" type="button" data-key="` + object['key_value'] + `" title="Copy key to clipboard"><i class="bi bi-clipboard"></i></button>
+                        <input name="encryptionKey" type="text" class="form-control" value="` + object['key_value'] + `" disabled>                      
+                        <button class="btn btn-primary copy-key" type="button" data-key="` + object['key_value'] + `" title="Copy key to clipboard"><i class="bi bi-clipboard"></i></button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="input-group col my-2">
+                        <div class="input-group-text"><i class="bi bi-calendar4-event" title="Timeout"></i></div>
+                        <input name="encryptionTimeout" type="date" class="form-control" value="` + object['timeout'] + `" disabled>                      
                       </div>
                     </div>
                     <div class="row">
