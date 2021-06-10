@@ -48,7 +48,7 @@ if (isset($_GET['result'])) {
       <div><a href="/" class="d-inline-block"><img class="d-block mx-auto" src="../assets/logo-light.jpeg" alt="" width="120" height="120" /></a></div>
       <a class="btn btn-link" href="/" role="button">&larr; back</a>
       <h1 class="display-6">Login</h1>
-      <form action="auth?action=login" method="post" name="usrLoginForm" id="usrLoginForm"" class="col-lg-5 mx-auto my-3 needs-validation" novalidate>
+      <form action="auth?action=login" method="post" name="usrLoginForm" id="usrLoginForm" class="col-lg-5 mx-auto my-3 needs-validation" novalidate>
         <?php echo (isset($alertMessage)) ? $alertMessage : ''; ?> 
         <div class="row my-1">
           <div class="col my-2">
@@ -68,11 +68,11 @@ if (isset($_GET['result'])) {
         </div>
         <div class="row my-1">
           <div class="col mx-auto my-2">
-            <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#resetPassword">Lost your password?</button><br>
             <label class="form-check-label" for="usrRememberCheck">
               Remember me
               <input class="form-check-input mx-2" type="checkbox" name="usrRememberCheck" id="usrRememberCheck">
             </label>
+            <br><button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#resetPassword">Lost your password?</button>
           </div>
         </div>
         <div class="row my-1">
@@ -89,22 +89,27 @@ if (isset($_GET['result'])) {
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body text-start">
-            Insert your email to reset your password
-            <div class="my-3">
-              <label for="usrEmailReset" class="form-label">Email address</label>
-              <input type="email" class="form-control" id="usrEmailReset">
-            </div>
+            <form method="POST" name="passwordResetForm" id="passwordResetForm" class="needs-validation" novalidate>
+              Insert your email to reset your password
+              <div class="my-3">
+                <label for="usrEmailReset" class="form-label">Email address</label>
+                <input type="email" class="form-control" name="usrEmailReset" id="usrEmailReset" required>
+                <div class="invalid-feedback">
+                  Insert a valid email address
+                </div>
+              </div>
           </div>
           <div class="modal-footer">            
-            <button type="button" id="modalResetButton" class="btn btn-primary">Reset</button>
+            <button type="submit" id="modalResetButton" class="btn btn-primary">Reset</button>
+            </form>
           </div>
         </div>
       </div>
     </div>
     </div>
   </div>
-
   <?php require 'components/footer.php'; ?>
+  <script src="js/resetPassword.js"></script>
 </body>
 
 </html>

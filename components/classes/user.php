@@ -200,4 +200,46 @@
       return password_verify($psw, $this->password);
     }
 
+    function resetPassword() {
+      $randomPassword = bin2hex(random_bytes(5));
+      $this->password = $randomPassword;
+      
+      $email = $this->email;
+      $password = password_hash($randomPassword, PASSWORD_DEFAULT);
+
+      $db = new Database();
+      $conn = $db->getConnection();
+
+      $stmt = $conn->prepare("UPDATE user SET password = (?) WHERE email = (?)");
+      if($stmt == FALSE) {
+        die('prepare() failed: ' . htmlspecialchars($conn->error));
+      }
+
+      $stmt->bind_param("ss", $password, $email);
+      if ( false == $stmt ) {
+        die('bind_param() failed: ' . htmlspecialchars($stmt->error));
+      }
+
+      $stmt->execute();
+      if($stmt->errno == 0) {
+        $stmt->close();
+        $db->closeConnection();
+
+        //Send email to user with new password
+
+        $to = $email;
+        $subject = "Krypto - Password Reset";
+        $txt = "Hi ".$this->first_name." ".$this->last_name.". This is your new password <strong>".$randomPassword."</strong>.";
+        $headers = "From: Krypto.";
+
+        mail($to,$subject,$txt,$headers);
+
+        return true;
+      } else {
+        $stmt->close();
+        $db->closeConnection();
+        return false;
+      }
+    }
+
   }
