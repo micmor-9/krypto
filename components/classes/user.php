@@ -201,7 +201,7 @@
     }
 
     function resetPassword() {
-      $randomPassword = bin2hex(random_bytes(5));
+      $randomPassword = bin2hex(random_bytes(10));
       $this->password = $randomPassword;
       
       $email = $this->email;
@@ -229,7 +229,7 @@
 
         $to = $email;
         $subject = "Krypto - Password Reset";
-        $txt = "Hi ".$this->first_name." ".$this->last_name.". This is your new password <strong>".$randomPassword."</strong>.";
+        $txt = "Hi ".$this->first_name." ".$this->last_name.". This is your new password: ".$randomPassword.".";
         $headers = "From: Krypto.";
 
         mail($to,$subject,$txt,$headers);

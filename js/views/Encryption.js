@@ -77,13 +77,7 @@ export default class Encryption extends AbstractView {
       data = values["encryptionMessage"];
     } else {
       //Object Type File
-      var encryptionFile = document.getElementById('encryptionFile').files[0];
-      var fileReader = new FileReader();
-      fileReader.onload = function(fileLoadedEvent){
-          var textFromFileLoaded = fileLoadedEvent.target.result;
-          return textFromFileLoaded;
-      };
-      data = fileReader.readAsText(encryptionFile);
+      data = values["encryptionFileContent"];
     }
 
     console.log('Data: ' + data);
@@ -149,7 +143,7 @@ export default class Encryption extends AbstractView {
                 <div class="btn-group-vertical">
                   <button id="shareButton" class="btn btn-outline-primary" type="button"><i class="bi bi-share-fill"></i>Share</button>
                   <button id="copyButton" class="btn btn-outline-primary" type="button"><i class="bi bi-link-45deg"></i></i>Copy link</button>
-                  <button id="downloadButton" class="btn btn-outline-primary" type="button"><i class="bi bi-download"></i>Download</button>
+                  <button id="downloadButton" class="btn btn-outline-primary" type="button"><i class="bi bi-download"></i>Download as a file</button>
                   <button id="emailButton" class="btn btn-outline-primary" type="button"><i class="bi bi-envelope-fill"></i>E-Mail</button>
                 </div>
               </div>
@@ -339,6 +333,7 @@ export default class Encryption extends AbstractView {
       <label for="encryptionFile" class="encryption-file col-sm-4 col-form-label my-2">Upload your file</label>
       <div class="col my-2"> 
         <input type="file" class="encryption-file form-control" id="encryptionFile" name="encryptionFile">
+        <input type="hidden" name="encryptionFileContent" id="encryptionFileContent">
       </div>
     </div>
     <div class="row my-1">
@@ -431,6 +426,16 @@ export default class Encryption extends AbstractView {
           $("#encryptionFile").attr("required", true);
           break;
       }
+    });
+
+    $("input[name='encryptionFile']").on("change", function () {
+      var encryptionFile = document.getElementById('encryptionFile').files[0];
+      var fileReader = new FileReader();
+      fileReader.onload = function(fileLoadedEvent){
+          var textFromFileLoaded = fileLoadedEvent.target.result;
+          $('#encryptionFileContent').val(textFromFileLoaded);
+      };
+      fileReader.readAsText(encryptionFile);
     });
 
     var generateKeyButton = document.getElementById("generateKey");

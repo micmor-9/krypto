@@ -94,6 +94,9 @@ function checkAuth() {
           header('location: login');
         }
       }
+    } else {
+      //User is not logged in
+      header('location: login');
     }
   }
 }

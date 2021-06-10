@@ -17,7 +17,7 @@ export default class Archive extends AbstractView {
       url: '../../components/ajax/archive.php',
       type: 'POST',
       success: function(result, xhr, status) {
-        if(result != false) {
+        if(result != 'false') {
           var data = $.parseJSON(result);        
           data.forEach((object) => {
 
@@ -64,7 +64,7 @@ export default class Archive extends AbstractView {
 
           $('#archiveAccordion').html(objectHTML);
         } else {
-          objectHTML = `<div class="alert alert-warning alert-dismissible fade show" role="alert">No encrypted object found for this user.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`;
+          objectHTML = `<div class="alert alert-warning alert-dismissible fade show" role="alert">No encrypted object found for this user.</div>`;
           $('#archiveAccordion').html(objectHTML);
         }
 
