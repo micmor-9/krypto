@@ -24,7 +24,7 @@ export default class MyAccount extends AbstractView {
       }
     });
 
-    return `<div class="container">
+    return `<div class="container-fluid">
     <h1>My Account</h1>
     <form name="myAccountForm" id="myAccountForm" class="col-12 col-lg-8 col-xl-5 mr-auto my-3">
     <div class="row my-1">

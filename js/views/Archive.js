@@ -37,7 +37,7 @@ export default class Archive extends AbstractView {
                     <div class="row">
                       <div class="input-group col mt-2">
                         <div class="input-group-text"><i class="bi bi-key-fill" title="Key"></i></div>
-                        <input name="encryptionKey" type="password" class="form-control" placeholder="Insert your password to view the key">                        
+                        <input name="encryptionKey" type="password" class="form-control" placeholder="Insert password to view the key">                        
                         <input name="encryptionKeyValue" type="hidden" value="` + object['key_value'] +`">                     
                         <button class="btn btn-primary unlock-key" type="button" data-object="object-` + object['obj_id'] +`" title="Get the key"><i class="bi bi-unlock"></i></button>
                       </div>
@@ -50,7 +50,7 @@ export default class Archive extends AbstractView {
                     </div>
                     <div class="row">
                       <div class="input-group col mt-3 mb-2">
-                        <div class="input-group-text"><i class="bi bi-calendar4-event" title="Timeout"></i></div>
+                        <div class="input-group-text"><i class="bi bi-calendar4-event px-2" title="Timeout"></i></div>
                         <input name="encryptionTimeout" type="date" class="form-control" value="` + object['timeout'] + `" disabled>                      
                       </div>
                     </div>
@@ -122,7 +122,7 @@ export default class Archive extends AbstractView {
       }
     });
 
-    return `<div class="container">
+    return `<div class="container-fluid">
     <h1>Archive</h1>
     <div class="app-content">
     <div class="accordion col-12 col-lg-10 col-xxl-8 mr-auto my-3" id="archiveAccordion">

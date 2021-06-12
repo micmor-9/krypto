@@ -311,7 +311,7 @@ export default class Encryption extends AbstractView {
       "-" +
       ("0" + date.getDate()).slice(-2);
     return (
-      `<div class="container">
+      `<div class="container-fluid">
     <h1>Encryption</h1>
     <p class="lead">Advanced Encryption Standard(AES) is a symmetric encryption algorithm. AES is the industry standard as of now as it allows 128 bit, 192 bit and 256 bit encryption. Symmetric encryption is very fast as compared to asymmetric encryption and are used in systems such as database system.</p>
     <div class="app-content">

@@ -168,7 +168,7 @@ export default class Decryption extends AbstractView {
       });
     }
 
-    const htmlContent =`<div class="container">
+    const htmlContent =`<div class="container-fluid">
       <h1>Decryption <small class="text-muted" id="decryptionObjectID"></small></h1>
       <div class="app-content">
       <div class="app-content-overlay">
