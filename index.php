@@ -11,7 +11,7 @@ $loggedUser = checkAuth();
 
 if($loggedUser instanceof User) {
   //User is logged, show application
-  include 'app.php';
+  include 'controller.php';
 } else {
   //User is not logged, show intro
   include 'intro.php';

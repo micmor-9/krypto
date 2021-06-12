@@ -3,6 +3,7 @@
 */
 
 import AbstractView from "./AbstractView.js";
+import Decryption from "./Decryption.js";
 
 export default class Archive extends AbstractView {
   constructor(params) {
@@ -29,23 +30,26 @@ export default class Archive extends AbstractView {
             </h2>
             <div id="object-` + object['obj_id'] +`" class="accordion-collapse collapse" aria-labelledby="heading-` + object['obj_id'] + `" data-bs-parent="#archiveAccordion">
               <div class="accordion-body row">`;
-            if(object['file_download_link'] == null) {
-              //Object Type Message
-              objectHTML += `<label for="encryptionMessage" class="form-label"><strong>Message</strong></label><div class="col-12 col-md-7 my-2"><textarea class="form-control" id="encryptionMessage-` + object['obj_id'] +`" name="encryptionMessage" rows="6" disabled>` + object['content'] + `</textarea></div>`;              
-            } else {
-              //Object Type File
-            }
+            objectHTML += `<label for="encryptionMessage" class="form-label"><strong>Message</strong></label><div class="col-12 col-lg-6 my-2"><textarea class="form-control" id="encryptionMessage-` + object['obj_id'] +`" name="encryptionMessage" rows="6" disabled>` + object['content'] + `</textarea></div>`;              
+            
             objectHTML += `
-                  <div class="col-12 col-md-5 my-2">
+                  <div class="col-12 col-lg-6 my-2">
                     <div class="row">
-                      <div class="input-group col my-2">
+                      <div class="input-group col mt-2">
                         <div class="input-group-text"><i class="bi bi-key-fill" title="Key"></i></div>
-                        <input name="encryptionKey" type="text" class="form-control" value="` + object['key_value'] + `" disabled>                      
-                        <button class="btn btn-primary copy-key" type="button" data-key="` + object['key_value'] + `" title="Copy key to clipboard"><i class="bi bi-clipboard"></i></button>
+                        <input name="encryptionKey" type="password" class="form-control" placeholder="Insert your password to view the key">                        
+                        <input name="encryptionKeyValue" type="hidden" value="` + object['key_value'] +`">                     
+                        <button class="btn btn-primary unlock-key" type="button" data-object="object-` + object['obj_id'] +`" title="Get the key"><i class="bi bi-unlock"></i></button>
+                      </div>
+                      <div class="valid-feedback">
+                        Key found successfully! 
+                      </div>
+                      <div class="invalid-feedback">
+                        Wrong password!
                       </div>
                     </div>
                     <div class="row">
-                      <div class="input-group col my-2">
+                      <div class="input-group col mt-3 mb-2">
                         <div class="input-group-text"><i class="bi bi-calendar4-event" title="Timeout"></i></div>
                         <input name="encryptionTimeout" type="date" class="form-control" value="` + object['timeout'] + `" disabled>                      
                       </div>
@@ -68,19 +72,29 @@ export default class Archive extends AbstractView {
           $('#archiveAccordion').html(objectHTML);
         }
 
-        $('.copy-key').on("click", function() {
-          const elem = document.createElement('textarea');
-          elem.value = $(this).data('key');
-          document.body.appendChild(elem);
-          elem.select();
-          document.execCommand('copy');
-          document.body.removeChild(elem);
-          $(this).find('i').removeClass('bi-clipboard');
-          $(this).find('i').addClass('bi-check2');
-          setTimeout(() => {
-            $(this).find('i').removeClass('bi-check2');
-            $(this).find('i').addClass('bi-clipboard');
-          }, 1500)
+        $('.unlock-key').on("click", function() {
+          var object = $(this).data('object');
+          var password = $('#' + object + ' input[name="encryptionKey"]').val();
+          var encryptedPassword = $('#' + object + ' input[name="encryptionKeyValue"]').val();
+
+          var decrypted = Decryption.decrypt(encryptedPassword, password, password.length);
+          var decryptedKey = decrypted.toString(CryptoJS.enc.Utf8);
+
+          if(decryptedKey != '') {
+            //Key found successfully
+            $('#' + object + ' input[name="encryptionKey"]').val(decryptedKey);
+            $('#' + object + ' input[name="encryptionKey"]').attr('disabled', 'true');
+            $('#' + object + ' input[name="encryptionKey"]').attr('type', 'text');
+
+            $('#' + object + ' .invalid-feedback').fadeOut();
+            $('#' + object + ' .valid-feedback').fadeIn();
+            $(this).attr('disabled', true);
+          } else {
+            //Password incorrect
+            $('#' + object + ' input[name="encryptionKey"]').val('');
+            $('#' + object + ' .valid-feedback').fadeOut();
+            $('#' + object + ' .invalid-feedback').fadeIn();
+          }
         });
 
         $('.delete-button').on('click', function() {
@@ -111,7 +125,7 @@ export default class Archive extends AbstractView {
     return `<div class="container">
     <h1>Archive</h1>
     <div class="app-content">
-    <div class="accordion col-12 col-lg-8 col-xl-7 mr-auto my-3" id="archiveAccordion">
+    <div class="accordion col-12 col-lg-10 col-xxl-8 mr-auto my-3" id="archiveAccordion">
     </div>
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
       <div class="modal-dialog">

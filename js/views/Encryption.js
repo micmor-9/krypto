@@ -21,26 +21,34 @@ export default class Encryption extends AbstractView {
         event.preventDefault();
         event.stopPropagation();
       }
-
       form.classList.add("was-validated");
 
-      var values = {};
-      $.each($(form).serializeArray(), function (i, field) {
-        values[field.name] = field.value;
-      });
-
-      //console.log(values);
       event.preventDefault();
 
-      //Validations
-      if (values["encryptionObjectType"] == "msg") {
-        if (values["encryptionMessage"].length > maxMessageLength) {
-          success = false;
-        }
-      }
-
       if (success) {
-        this.encryptionResult(values);
+        var passwordModal = new bootstrap.Modal(document.getElementById('passwordConfirm'));
+        passwordModal.show();
+
+        $('#passwordConfirmButton').on('click', () => {
+          var form = document.getElementById("passwordConfirmForm");
+          var success = form.checkValidity();
+          if (!success) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add("was-validated");
+
+          if(success) {
+            var encryptionForm = document.getElementById("encryptionForm");
+            var values = {};
+            $.each($(encryptionForm).serializeArray(), function (i, field) {
+              values[field.name] = field.value;
+            });
+            values["password"] = $('#passwordConfirmField').val();
+            passwordModal.hide();
+            this.encryptionResult(values);
+          }
+        });
       }
     });
   }
@@ -81,12 +89,13 @@ export default class Encryption extends AbstractView {
     }
 
     console.log('Data: ' + data);
-    var encryptedData = this.encrypt(data, values["encryptionKey"], values["encryptionKey"].length);     
+    var encryptedData = this.encrypt(data, values["encryptionKey"], values["encryptionKey"].length);
+    var encryptedKey = this.encrypt(values["encryptionKey"], values["password"], values["password"].length);
 
     $.ajax({
       url: '../../components/ajax/encryption.php',
       type: 'POST',
-      data: {content: encryptedData, timeout: values["encryptionTimeout"], key: values["encryptionKey"]},
+      data: {content: encryptedData, timeout: values["encryptionTimeout"], key: values["encryptionKey"], encryptedKey: encryptedKey, password: values["password"]},
       success: (result, xhr, status) => {
         try {
           var data = $.parseJSON(result);
@@ -385,6 +394,28 @@ export default class Encryption extends AbstractView {
   </form>
   </div>
   </div>
+  </div>
+  <div class="modal fade" id="passwordConfirm" tabindex="-1" aria-labelledby="passwordConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="passwordConfirmLabel">Confirm your password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-start">
+          <form method="POST" name="passwordConfirmForm" id="passwordConfirmForm" class="needs-validation" novalidate>
+            Insert your password to validate the encryption
+            <div class="my-3">
+              <label for="passwordConfirmField" class="form-label">Password</label>
+              <input type="password" class="form-control" name="passwordConfirmField" id="passwordConfirmField" required>
+            </div>
+        </div>
+        <div class="modal-footer">            
+          <button type="submit" name="passwordConfirmButton" id="passwordConfirmButton" class="btn btn-primary">Confirm</button>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>`
     );
   }

@@ -4,8 +4,6 @@
 
 import AbstractView from "./AbstractView.js";
 
-const keyLengths = [128, 192, 256];
-
 export default class Decryption extends AbstractView {
   constructor(params) {
     super(params);
@@ -51,7 +49,7 @@ export default class Decryption extends AbstractView {
     $(".app-content").fadeTo(1000, 0.4);
     if (values["decryptionObjectType"] == "msg") {
 
-      var decrypted = this.decrypt(values["decryptionMessage"], values["decryptionKey"], values["decryptionKey"].length);
+      var decrypted = Decryption.decrypt(values["decryptionMessage"], values["decryptionKey"], values["decryptionKey"].length);
       var decryptedMessage = decrypted.toString(CryptoJS.enc.Utf8);
 
       if(decryptedMessage == '') {
@@ -95,9 +93,8 @@ export default class Decryption extends AbstractView {
     }
   }
 
-  decrypt (transitmessage, pass, keyLength) {
+  static decrypt (transitmessage, pass, keyLength) {
     var keySize = keyLength*8;
-    var ivSize = 128;
     var iterations = 100;
 
     var salt = CryptoJS.enc.Hex.parse(transitmessage.substr(0, 32));
@@ -142,36 +139,28 @@ export default class Decryption extends AbstractView {
             var today = new Date();
             var timeout_date = new Date(data.timeout.split('-'));
 
-            if(data.fileDownloadLink == null) {
-              //Object Type: message
-              $('.decryption-object-type').fadeOut();
-              $('.decryption-file').fadeOut();
-              $('.decryption-message').fadeIn();
+            $('.decryption-object-type').fadeOut();
+            $('.decryption-file').fadeOut();
+            $('.decryption-message').fadeIn();
 
-              $('#decryptionObjectID').html('#' + data.objectID);
-              $('.decryption-message').before('<div class="row my-1 decryption-timeout"><label for="decryptionTimeout" class="col-sm-4 col-form-label my-2">Timeout</label><div class="col my-2"><input type="date" class="form-control" id="decryptionTimeout" name="decryptionTimeout" value="' + data.timeout + '" disabled></div></div>');
+            $('#decryptionObjectID').html('#' + data.objectID);
+            $('.decryption-message').before('<div class="row my-1 decryption-timeout"><label for="decryptionTimeout" class="col-sm-4 col-form-label my-2">Timeout</label><div class="col my-2"><input type="date" class="form-control" id="decryptionTimeout" name="decryptionTimeout" value="' + data.timeout + '" disabled></div></div>');
 
-              $('#decryptionMessage').prop('disabled', true);
-              if(today < timeout_date) {
-                //Timeout hasn't expired
-                $('#decryptionMessage').val(data.content);
-              } else {
-                //Timeout has expired
-                $('#decryptionMessage').val(('*').repeat(data.content.length));
-                $('.decryption-timeout').before('<div class="alert alert-warning alert-dismissible fade show" role="alert">Timeout has expired. You can\'t decrypt this object anymore.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
-                $('#decryptionKey').prop('disabled', true);
-                $('button[type="submit"]').prop('disabled', true);
-              }
-              
-              $('#decryptionMessage').trigger('input');
-
-              $('.app-content').before('<span class="badge bg-primary">Created by ' + data.user.firstName + ' ' + data.user.lastName + '</span>');
+            $('#decryptionMessage').prop('disabled', true);
+            if(today < timeout_date) {
+              //Timeout hasn't expired
+              $('#decryptionMessage').val(data.content);
             } else {
-              //Object Type: file
-              $('.decryption-object-type').fadeOut();
-              $('.decryption-message').fadeOut();
-              $('.decryption-file').fadeIn();
+              //Timeout has expired
+              $('#decryptionMessage').val(('*').repeat(data.content.length));
+              $('.decryption-timeout').before('<div class="alert alert-warning alert-dismissible fade show" role="alert">Timeout has expired. You can\'t decrypt this object anymore.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+              $('#decryptionKey').prop('disabled', true);
+              $('button[type="submit"]').prop('disabled', true);
             }
+            
+            $('#decryptionMessage').trigger('input');
+
+            $('.app-content').before('<span class="badge bg-primary">Created by ' + data.user.firstName + ' ' + data.user.lastName + '</span>');
           } else {
             $('#decryptionForm').prepend('<div class="alert alert-danger alert-dismissible fade show" role="alert">No encrypted object found with <strong>' + object +'</strong> as ID.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
           }

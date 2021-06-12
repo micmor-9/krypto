@@ -8,17 +8,13 @@
     private $key_id;
     private $key;
     private $user_id;
-    private $file_download_link;
 
-    function __construct($timeout, $content, $user_id, $obj_id = null, $file_download_link = null) {
+    function __construct($timeout, $content, $user_id, $obj_id = null) {
       $this->timeout = $timeout;
       $this->content = $content;
       $this->user_id = $user_id;
       if($obj_id != null) {
         $this->obj_id = $obj_id;
-      }
-      if($file_download_link != null) {
-        $this->file_download_link = $file_download_link;
       }
     }
 
@@ -27,8 +23,7 @@
         'objectID'  => $this->getObjectId(),
         'timeout'   => $this->getTimeout(),
         'content'   => $this->getContent(),
-        'user'      => $this->getUser(),
-        'fileDownloadLink' => $this->getFileDownloadLink()
+        'user'      => $this->getUser()
       );
 
       return $data;
@@ -89,26 +84,20 @@
       return $this->timeout;
     }
 
-    function getFileDownloadLink() {
-      return $this->file_download_link;
-    }
-
     function insertObject($key) {
       $db = new Database();
       $conn = $db->getConnection();
 
       $result = array(); 
 
-      $stmt = $conn->prepare("INSERT INTO pass_key (key_value, key_length) VALUES (?, ?)");
+      $stmt = $conn->prepare("INSERT INTO pass_key (key_value) VALUES (?)");
       if($stmt == FALSE) {
-        die('prepare() failed: ' . htmlspecialchars($conn->error));
+        die('1 prepare() failed: ' . htmlspecialchars($conn->error));
       }
 
-      $key_length = strlen($key);
-
-      $stmt->bind_param("si", $key, $key_length);
+      $stmt->bind_param("s", $key);
       if ( false == $stmt ) {
-        die('bind_param() failed: ' . htmlspecialchars($stmt->error));
+        die('2 bind_param() failed: ' . htmlspecialchars($stmt->error));
       }
 
       $stmt->execute();
@@ -126,23 +115,22 @@
       //Generate 8-char unique ID from key
       $this->obj_id = substr(md5(substr($key, 0, 8)), 0, 8);
 
-      $stmt = $conn->prepare("INSERT INTO encrypted_object (obj_id, timeout, content, file_download_link, qr_value, qr_download_link, user_id, key_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+      $stmt = $conn->prepare("INSERT INTO encrypted_object (obj_id, timeout, content, qr_value, qr_download_link, user_id, key_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
       if($stmt == FALSE) {
-        die('prepare() failed: ' . htmlspecialchars($conn->error));
+        die('3 prepare() failed: ' . htmlspecialchars($conn->error));
       }
 
       $obj_id = $this->obj_id;
       $timeout = $this->timeout;
       $content = $this->content;
-      $file_download_link = $this->file_download_link;
       $qr_value = 'https://'.$_SERVER['HTTP_HOST'].'/decryption?obj='.$this->obj_id;
       $qr_download_link = 'https://api.qrserver.com/v1/create-qr-code/?data='.$qr_value.'&size=150x150';
       $user_id = $this->user_id;
       $key_id = $this->key_id;
 
-      $stmt->bind_param("ssssssii", $obj_id, $timeout, $content, $file_download_link, $qr_value, $qr_download_link, $user_id, $key_id);
+      $stmt->bind_param("sssssii", $obj_id, $timeout, $content, $qr_value, $qr_download_link, $user_id, $key_id);
       if ( false == $stmt ) {
-        die('bind_param() failed: ' . htmlspecialchars($stmt->error));
+        die('4 bind_param() failed: ' . htmlspecialchars($stmt->error));
       }
 
       $stmt->execute();
@@ -181,7 +169,7 @@
         $encrypted_object = $res->fetch_assoc();
 
         if($encrypted_object) {
-          $_object = new EncryptedObject($encrypted_object['timeout'], $encrypted_object['content'], $encrypted_object['user_id'], $encrypted_object['obj_id'], $encrypted_object['file_download_link']);
+          $_object = new EncryptedObject($encrypted_object['timeout'], $encrypted_object['content'], $encrypted_object['user_id'], $encrypted_object['obj_id']);
           $stmt->close();
           $db->closeConnection();
           return $_object;

@@ -96,7 +96,9 @@ function checkAuth() {
       }
     } else {
       //User is not logged in
-      header('location: login');
+      if(isset($_GET['obj'])) {
+        header('location: login');
+      }
     }
   }
 }

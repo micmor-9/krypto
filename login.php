@@ -109,7 +109,7 @@ if (isset($_GET['result'])) {
     </div>
   </div>
   <?php require 'components/footer.php'; ?>
-  <script src="js/resetPassword.js"></script>
+  <script src="js/scripts/resetPassword.js"></script>
 </body>
 
 </html>

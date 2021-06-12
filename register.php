@@ -86,7 +86,7 @@ if (isset($_GET['result'])) {
     </div>
   </div>
   <?php require 'components/footer.php'; ?>
-  <script src="js/formValidation.js"></script>
+  <script src="js/scripts/formValidation.js"></script>
 </body>
 
 </html>
