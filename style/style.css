@@ -10859,11 +10859,13 @@ fieldset:disabled .btn {
 }
 
 #usrSidebar {
-  /* height: 95vh; */
   background-color: #ffffff;
-  /* width: 20%;
-  min-width: 184px;
-  max-width: 280px; */
+}
+
+@media (min-width: 576px) {
+  #appContent {
+    min-height: 90vh;
+  }
 }
 
 .password-change, .encryption-file, .decryption-file {

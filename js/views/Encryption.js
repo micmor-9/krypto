@@ -316,7 +316,7 @@ export default class Encryption extends AbstractView {
     <p class="lead">Advanced Encryption Standard(AES) is a symmetric encryption algorithm. AES is the industry standard as of now as it allows 128 bit, 192 bit and 256 bit encryption. Symmetric encryption is very fast as compared to asymmetric encryption and are used in systems such as database system.</p>
     <div class="app-content">
     <div class="app-content-overlay">
-    <form name="encryptionForm" id="encryptionForm" method="post" class="col-12 col-lg-8 col-xl-5 mr-auto my-3 needs-validation" novalidate>
+    <form name="encryptionForm" id="encryptionForm" method="post" class="col-12 col-lg-8 col-xl-6 mr-auto my-3 needs-validation" novalidate>
     <div class="row my-1">
       <label for="encryptionObjectType" class="col-sm-4 col-form-label my-2">Choose </label>
       <div class="col my-2">
