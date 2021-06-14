@@ -27,7 +27,6 @@ export default class Decryption extends AbstractView {
         values[field.name] = field.value;
       });
 
-      console.log(values);
       event.preventDefault();
 
       //Validations
@@ -36,7 +35,7 @@ export default class Decryption extends AbstractView {
           values["decryptionMessage"] = $('#decryptionMessage').val();
         }
       } else {
-        //TODO check if file has been uploaded successfully
+        values["decryptionFileContent"] = $('#decryptionFileContent').val();
       }
 
       if (success) {
@@ -47,50 +46,55 @@ export default class Decryption extends AbstractView {
 
   decryptionResult(values) {
     $(".app-content").fadeTo(1000, 0.4);
+
+    var decryptionString;
     if (values["decryptionObjectType"] == "msg") {
-
-      var decrypted = Decryption.decrypt(values["decryptionMessage"], values["decryptionKey"], values["decryptionKey"].length);
-      var decryptedMessage = decrypted.toString(CryptoJS.enc.Utf8);
-
-      if(decryptedMessage == '') {
-        //Key is wrong, message can't be decrypted
-        decryptedMessage = ('•').repeat(values["decryptionMessage"].length);
-      }
-
-      var newContent =
-        `<button onclick="history.back()" class="btn btn-link px-0" role="button">&larr; back</button>
-      <h3>Result</h3>
-      <form name="decryptionForm" id="decryptionForm" method="post" class="col-12 col-lg-8 col-xl-5 mr-auto mb-3 needs-validation" novalidate>
-      <div class="row my-1 decryption-message">
-        <div class="col my-2">
-          <label for="decryptionMessage" class="form-label">Your decrypted message</label>
-          <textarea class="form-control" id="decryptionMessage" name="decryptionMessage" rows="10" disabled>` +
-        decryptedMessage +
-        `</textarea>
-        </div>
-      </div>
-      <div class="row my-1">
-        <label for="decryptionKey" class="col-sm-4 col-form-label my-2">Your key</label>
-        <div class="col my-2">
-          <div class="input-group">
-            <input type="text" class="form-control" id="decryptionKey" name="decryptionKey" value="` +
-        values["decryptionKey"] +
-        `" disabled>            
-          </div>
-        </div>
-      </div>
-      </form>
-      </div>`;
-
-      setTimeout(() => {
-        $(".app-content").html(newContent)
-        if(decryptedMessage.indexOf('•') >= 0) {
-          $('#decryptionForm').prepend('<div class="alert alert-warning alert-dismissible fade show" role="alert">The key is wrong, please try again with a different key.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
-        }
-      }, 1000);
-      $(".app-content").fadeTo(1000, 1);
-
+      decryptionString = values["decryptionMessage"];
+    } else {
+      decryptionString = values["decryptionFileContent"];
     }
+
+    var decrypted = Decryption.decrypt(decryptionString, values["decryptionKey"], values["decryptionKey"].length);
+    var decryptedMessage = decrypted.toString(CryptoJS.enc.Utf8);
+
+    if(decryptedMessage == '') {
+      //Key is wrong, message can't be decrypted
+      decryptedMessage = ('•').repeat(values["decryptionMessage"].length);
+    }
+
+    var newContent =
+      `<button onclick="history.back()" class="btn btn-link px-0" role="button">&larr; back</button>
+    <h3>Result</h3>
+    <form name="decryptionForm" id="decryptionForm" method="post" class="col-12 col-lg-8 col-xl-5 mr-auto mb-3 needs-validation" novalidate>
+    <div class="row my-1 decryption-message">
+      <div class="col my-2">
+        <label for="decryptionMessage" class="form-label">Your decrypted message</label>
+        <textarea class="form-control" id="decryptionMessage" name="decryptionMessage" rows="10" disabled>` +
+      decryptedMessage +
+      `</textarea>
+      </div>
+    </div>
+    <div class="row my-1">
+      <label for="decryptionKey" class="col-sm-4 col-form-label my-2">Your key</label>
+      <div class="col my-2">
+        <div class="input-group">
+          <input type="text" class="form-control" id="decryptionKey" name="decryptionKey" value="` +
+      values["decryptionKey"] +
+      `" disabled>            
+        </div>
+      </div>
+    </div>
+    </form>
+    </div>`;
+
+    setTimeout(() => {
+      $(".app-content").html(newContent)
+      if(decryptedMessage.indexOf('•') >= 0) {
+        $('#decryptionForm').prepend('<div class="alert alert-warning alert-dismissible fade show" role="alert">The key is wrong, please try again with a different key.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+      }
+    }, 1000);
+    $(".app-content").fadeTo(1000, 1);
+
   }
 
   static decrypt (transitmessage, pass, keyLength) {
@@ -196,6 +200,7 @@ export default class Decryption extends AbstractView {
         <label for="decryptionFile" class="decryption-file col-sm-4 col-form-label my-2">Upload your file</label>
         <div class="col my-2"> 
           <input type="file" class="decryption-file form-control" id="decryptionFile" name="decryptionFile">
+          <input type="hidden" name="decryptionFileContent" id="decryptionFileContent">
         </div>
       </div>
       <div class="row my-1">
@@ -250,6 +255,16 @@ export default class Decryption extends AbstractView {
           $("#decryptionFile").attr("required", true);
           break;
       }
+    });
+
+    $("input[name='decryptionFile']").on("change", function () {
+      var decryptionFile = document.getElementById('decryptionFile').files[0];
+      var fileReader = new FileReader();
+      fileReader.onload = function(fileLoadedEvent){
+          var textFromFileLoaded = fileLoadedEvent.target.result;
+          $('#decryptionFileContent').val(textFromFileLoaded);
+      };
+      fileReader.readAsText(decryptionFile);
     });
 
     this.decryptionHandler();

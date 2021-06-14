@@ -60,7 +60,7 @@
       }
 
       //Table: ecnrypted_object
-      $sql = "CREATE TABLE encrypted_object ( obj_id VARCHAR(8) NOT NULL UNIQUE , timeout DATE NOT NULL , content VARCHAR(1000) NULL, qr_value VARCHAR(100) NOT NULL , qr_download_link VARCHAR(150) NOT NULL, user_id INT NOT NULL, key_id INT NOT NULL, PRIMARY KEY (obj_id), FOREIGN KEY (user_id) REFERENCES user(user_id), FOREIGN KEY (key_id) REFERENCES pass_key(key_id));";
+      $sql = "CREATE TABLE encrypted_object ( obj_id VARCHAR(8) NOT NULL UNIQUE , timeout DATE NOT NULL , content VARCHAR(1000) NULL, qr_value VARCHAR(100) NOT NULL , qr_download_link VARCHAR(150) NOT NULL, user_id INT NOT NULL, key_id INT NOT NULL, PRIMARY KEY (obj_id), FOREIGN KEY (user_id) REFERENCES user(user_id), FOREIGN KEY (key_id) REFERENCES pass_key(key_id) ON DELETE CASCADE);";
       $result = $this->connection->query($sql);
       
       if(!$result) {
