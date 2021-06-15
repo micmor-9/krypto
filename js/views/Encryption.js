@@ -258,14 +258,14 @@ export default class Encryption extends AbstractView {
     var keySize = keyLength*8;
     var iterations = 100;
 
-    var salt = CryptoJS.lib.WordArray.random(128/8);
+    var salt = CryptoJS.lib.WordArray.random(keySize/8);
     
     var key = CryptoJS.PBKDF2(pass, salt, {
         keySize: keySize/32,
         iterations: iterations
       });
   
-    var iv = CryptoJS.lib.WordArray.random(128/8);
+    var iv = CryptoJS.lib.WordArray.random(keySize/8);
     
     var encrypted = CryptoJS.AES.encrypt(msg, key, { 
       iv: iv, 
