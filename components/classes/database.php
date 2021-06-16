@@ -51,7 +51,7 @@
       }
 
       //Table: key
-      $sql = "CREATE TABLE pass_key ( key_id INT NOT NULL AUTO_INCREMENT , key_value VARCHAR(200) NOT NULL, PRIMARY KEY (key_id));";
+      $sql = "CREATE TABLE pass_key ( key_id INT NOT NULL AUTO_INCREMENT , key_value VARCHAR(256) NOT NULL, PRIMARY KEY (key_id));";
       $result = $this->connection->query($sql);
       
       if(!$result) {
