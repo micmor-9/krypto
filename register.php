@@ -56,9 +56,9 @@ if (isset($_GET['result'])) {
           </div>
           <div class="col-12 col-lg-4 my-2">
             <div class="form-floating">
-              <input type="password" class="form-control" name="usrPassword" id="usrPassword" required>
+              <input type="password" class="form-control" name="usrPassword" id="usrPassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Password must be between 8 and 15 chars, must contain a number, an uppercase letter and a special char" required>
               <label for="usrPassword">Password</label>
-              <div class="invalid-feedback">Please insert your password</div>
+              <div class="invalid-feedback">Invalid password</div>
             </div>
           </div>
           <div class="col-12 col-lg-4 my-2">

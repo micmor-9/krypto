@@ -1,11 +1,9 @@
-var loginForm = document.getElementById("usrLoginForm");
 var registerForm = document.getElementById("usrRegisterForm");
 
-if (loginForm) {
-  //login form validation
-}
-
 if (registerForm) {
+  var passwordTooltip = document.getElementById('usrPassword')
+  var tooltip = new bootstrap.Tooltip(passwordTooltip)
+
   //Register form validation
   $(registerForm).submit((event) => {
     var valid = true;
@@ -15,7 +13,7 @@ if (registerForm) {
       valid = false;
     }
 
-    if(!passwordCheck()) {
+    if(passwordCheck() == 0 || passwordCheck() == 2) {
       $("#usrPasswordConfirm").addClass("is-invalid");
       valid = false;
     }
@@ -38,22 +36,30 @@ $("#usrPassword").change(function (event) {
 });
 
 $("#usrPasswordConfirm").change(function (event) {
-  if(!passwordCheck()) {
-    $("#usrPasswordConfirm").addClass("is-invalid");
-    $("#usrRegisterForm").removeClass("was-validated");
-  } else {
-    $("#usrPasswordConfirm").removeClass("is-invalid");
-    $("#usrRegisterForm").addClass("was-validated");
-  }
+  passwordCheck();
 });
 
 passwordCheck = function () {
   var psw = $("#usrPassword").val();
   var pswCnf = $("#usrPasswordConfirm").val();
 
-  if (psw != pswCnf) {
-    return false;
+  //RegExp Password length between 8 and 15 characters, with one lowercase letter, one uppercase letter, one numeric digit and one special character
+  var test = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
+  if(psw.match(test)) {
+    $("#usrPassword").removeClass("is-invalid");
+    if(psw == pswCnf) {
+      $("#usrPassword").removeClass("is-invalid");
+      $("#usrPasswordConfirm").removeClass("is-invalid");
+      $("#usrRegisterForm").addClass("was-validated");
+      return 1; //Password is valid and matches the confirm
+    } else {
+      $("#usrPasswordConfirm").addClass("is-invalid");
+      $("#usrRegisterForm").removeClass("was-validated");
+      return 0; //Passwords don't match
+    }
   } else {
-    return true;
+    $("#usrPassword").addClass("is-invalid");
+    $("#usrRegisterForm").removeClass("was-validated");
+    return 2; //Password is invalid
   }
 };

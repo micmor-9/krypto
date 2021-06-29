@@ -6,7 +6,6 @@
     private $timeout;
     private $content;
     private $key_id;
-    private $key;
     private $user_id;
 
     function __construct($timeout, $content, $user_id, $obj_id = null) {
