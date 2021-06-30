@@ -119,7 +119,6 @@ export default class Decryption extends AbstractView {
   }
 
   charCounterUpdate() {
-    //TODO check keylength integrity
     $("#keyCharacterCounter").html(
       $("#decryptionKey").val().length
     );
