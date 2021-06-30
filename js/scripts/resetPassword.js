@@ -47,7 +47,6 @@ $(passwordResetForm).submit((event) => {
           }, 2000);
         } catch (e) {
           status = 'error';
-          console.log(result);
         }
       }
     });

@@ -5,13 +5,15 @@
 global $title;
 $title = 'Login | Krypto';
 require 'components/head.php';
+require_once 'components/classes/database.php';
+require_once 'components/classes/user.php';
 
 if (isset($_GET['result'])) {
-  require_once 'components/classes/database.php';
-  require_once 'components/classes/user.php';
 
+  //Verifico se c'è un messaggio da mostrare all'utente in seguito ad un'azione eseguita precedentemente
   switch ($_GET['result']) {
     case 'register':
+      //Messaggio di registrazione completata con successo
       $alertMessage = '<div class="alert alert-success alert-dismissible fade show" role="alert">
         Registration completed successfully!
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -19,6 +21,7 @@ if (isset($_GET['result'])) {
       break;
 
     case 'user':
+      //Messaggio di errore: nessun utente trovato con l'indirizzo email fornito
       $alertMessage = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
         No user found. Try with another email address.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -26,6 +29,7 @@ if (isset($_GET['result'])) {
       break;
 
     case 'password':
+      //Messaggio di errore: password inserita non valida
       $alertMessage = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
         Wrong password. <a href="#" class="alert-link">Lost your password?</a>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -33,6 +37,7 @@ if (isset($_GET['result'])) {
       break;
 
     case 'session':
+      //Messaggio di errore: sessione scaduta
       $alertMessage = '<div class="alert alert-warning alert-dismissible fade show" role="alert">
         Session expired, please login again.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -111,5 +116,4 @@ if (isset($_GET['result'])) {
   <?php require 'components/footer.php'; ?>
   <script src="js/scripts/resetPassword.js"></script>
 </body>
-
 </html>

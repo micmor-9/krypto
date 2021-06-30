@@ -3,6 +3,7 @@ if (isset($_GET['action'])) {
   require_once 'components/classes/database.php';
   require_once 'components/classes/user.php';
 
+  //Determino l'operazione da effettuare
   $action = $_GET['action'];
 
   if ($action != 'register' && $action != 'login') {
@@ -11,12 +12,13 @@ if (isset($_GET['action'])) {
 
   switch ($action) {
     case 'register':
+      //Registrazione
       $user = new User($_POST['usrFirstName'], $_POST['usrLastName'], $_POST['usrEmail'], $_POST['usrPassword'], $_POST['usrBirthdate']);
       if ($user->registerUser()) {
-        //Registration completed successfully
+        //Registrazione completata con successo
         header('location: login?result=register');
       } else {
-        //Error occurred during registration
+        //Si è verificato un errore durante la registrazione
         header('location: register?result=error');
       }
       break;
@@ -27,13 +29,13 @@ if (isset($_GET['action'])) {
       $usrRememberCheck = (isset($_POST['usrRememberCheck'])) ? true : false;
 
       if ($usrEmail != '' && $usrPassword != '') {
-        //Check if user with email exists
+        //Verifica se esiste un utente associato all'email inserita
         $user = User::findUserByEmail($usrEmail);
         if ($user) {
-          //User found successfully, now check passwords
+          //Utente trovato con successo, ora verifica le password
           $check = $user->checkPassword($usrPassword);
           if ($check) {
-            //Passwords match, proceed to login
+            //Le password corrispondono, procedi con il login
             echo 'Login successful.';
             $uid = $user->getUserId();
             $logged_in = time();
@@ -47,11 +49,11 @@ if (isset($_GET['action'])) {
             }
             header("location: /");
           } else {
-            //Passwords don't match, reject login with error
+            //Le password non corrispondono, segnala errore
             header('location: login?result=password');
           }
         } else {
-          //No user found
+          //Nessun utente trovato
           header('location: login?result=user');
         }
       }
@@ -59,9 +61,9 @@ if (isset($_GET['action'])) {
   }
 }
 
-//Function that checks if user is logged through session or through cookie
+//Funzione che verifica se l'utente è loggato tramite sessione o cookie
 function checkAuth() {
-  //Check if a session has already been created.
+  //Verifico se è già presente una sessione in memoria
   session_start();
   if (isset($_SESSION['uid']) || isset($_SESSION['logged_in'])) {
     if ((time() - $_SESSION['logged_in']) <= 3600) {
@@ -72,22 +74,22 @@ function checkAuth() {
       header('location: login?result=session');
     }
   } else {
-    //Check if cookie is set.
+    //Verifico se è già presente un cookie in memoria
     if (isset($_COOKIE['AUTH_ID']) && isset($_COOKIE['AUTH_TOKEN'])) {
-      //There is a cookie, check its integrity.
+      //Cookie presente, verifico integrità
       $user = User::getUserById($_COOKIE['AUTH_ID']);
       if ($user) {
         $cookieCheck = sha1(md5($user->getEmail()) . md5($user->getPassword()));
         if ($_COOKIE['AUTH_TOKEN'] === $cookieCheck) {
-          //Cookie check successful. Fill session data.
+          //Cookie integro. Inserisco dati nella sessione
           $uid = $user->getUserId();
           $logged_in = time();
-          //Fill session data.
+          //Dati sessione
           $_SESSION['uid'] = $uid;
           $_SESSION['logged_in'] = $logged_in;
           return $user;
         } else {
-          //Integrity check failed. Unset cookies and redirect to login
+          //Cookie non integro, sessione distrutta e reindirizzo al login
           setcookie('AUTH_ID', null,  1, '/', '.krypto.poliba.com', true);
           setcookie('AUTH_TOKEN', null,  1, '/', '.krypto.poliba.com', true);
           session_unset();
@@ -95,7 +97,7 @@ function checkAuth() {
         }
       }
     } else {
-      //User is not logged in
+      //L'utente non è loggato
       if(isset($_GET['obj'])) {
         header('location: login');
       }

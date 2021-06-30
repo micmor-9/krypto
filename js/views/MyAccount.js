@@ -1,5 +1,5 @@
 /* View MyAccount
-  Page from which the user can update his personal data.
+  Pagina per la modifica dei dati personali
 */
 
 import AbstractView from "./AbstractView.js";
@@ -11,7 +11,7 @@ export default class MyAccount extends AbstractView {
   }
 
   async getHtml() {
-    //TODO get user data from db
+    //Ottengo i dati dal DB relativi all'utente corrente
     $.ajax({
       url: '../../components/ajax/my-account.php',
       type: 'POST',
@@ -24,6 +24,7 @@ export default class MyAccount extends AbstractView {
       }
     });
 
+    //Form per l'aggiornamento dei dati
     return `<div class="container-fluid">
     <h1>My Account</h1>
     <form name="myAccountForm" id="myAccountForm" class="col-12 col-lg-8 col-xl-5 mr-auto my-3">
@@ -89,6 +90,7 @@ export default class MyAccount extends AbstractView {
   }
 
   loadScripts() {
+    //Abilito i campi per la nuova password se viene inserita la vecchia password
     $('#oldPassword').on('input', function () {
       if($(this).val() != '') {
         $('.password-change').fadeIn();

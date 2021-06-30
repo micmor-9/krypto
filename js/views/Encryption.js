@@ -88,7 +88,6 @@ export default class Encryption extends AbstractView {
       data = values["encryptionFileContent"];
     }
 
-    console.log('Data: ' + data);
     var encryptedData = this.encrypt(data, values["encryptionKey"], values["encryptionKey"].length);
     var encryptedKey = this.encrypt(values["encryptionKey"], values["password"], values["password"].length);
 
@@ -102,7 +101,6 @@ export default class Encryption extends AbstractView {
           var status = data['status'];
         } catch (e) {
           status = 'error';
-          console.log(result);
         }
         var resultAlert;
         if(status == 'success') {
@@ -254,7 +252,6 @@ export default class Encryption extends AbstractView {
   }
 
   encrypt (msg, pass, keyLength) {
-    console.log('Msg: ' + msg);
     var keySize = keyLength*8;
     var iterations = 100;
 

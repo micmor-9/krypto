@@ -3,8 +3,9 @@ global $title;
 $title = 'Register | Krypto';
 require_once 'components/head.php';
 
+//Verifico che non ci siano errori di registrazione precedente
 if (isset($_GET['result'])) {
-  if($_GET['result'] == 'error') {
+  if ($_GET['result'] == 'error') {
     $alertMessage = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
       There has been an error during registration. Retry!
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -15,6 +16,7 @@ if (isset($_GET['result'])) {
 
 <!doctype html>
 <html lang="en">
+
 <body>
   <div class="container">
     <div class="px-4 py-5 my-md-5 text-center">
@@ -22,7 +24,7 @@ if (isset($_GET['result'])) {
       <a class="btn btn-link" href="<?php echo $_SERVER['HTTP_REFERER']; ?>" role="button">&larr; back</a>
       <h1 class="display-6">Register</h1>
       <form action="auth?action=register" name="usrRegisterForm" id="usrRegisterForm" class="col-8 mx-auto my-3 needs-validation" method="post" novalidate>
-      <?php echo (isset($alertMessage)) ? $alertMessage : ''; ?>
+        <?php echo (isset($alertMessage)) ? $alertMessage : ''; ?>
         <div class="row my-1">
           <div class="col-12 col-lg-4 my-2">
             <div class="form-floating">
