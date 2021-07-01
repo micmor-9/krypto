@@ -90,5 +90,4 @@ if (isset($_GET['result'])) {
   <?php require 'components/footer.php'; ?>
   <script src="js/scripts/formValidation.js"></script>
 </body>
-
 </html>

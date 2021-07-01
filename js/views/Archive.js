@@ -77,7 +77,7 @@ export default class Archive extends AbstractView {
           var password = $('#' + object + ' input[name="encryptionKey"]').val();
           var encryptedPassword = $('#' + object + ' input[name="encryptionKeyValue"]').val();
 
-          var decrypted = Decryption.decrypt(encryptedPassword, password, password.length);
+          var decrypted = Decryption.decrypt(encryptedPassword, password.substr(0,8), 8);
           var decryptedKey = decrypted.toString(CryptoJS.enc.Utf8);
 
           if(decryptedKey != '') {
